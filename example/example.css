@@ -1,0 +1,129 @@
+body {
+  background: rgba(234, 238, 241, 0.85);
+  margin: 0;
+  font-family: Roboto;
+}
+.nav {
+  background: #0D1D45;
+  color: rgba(255, 255, 255, 0.7);
+  height: 48px;
+}
+.logo {
+  padding: 12px 0 8px 24px;
+  margin-right: 16px;
+  width: 155px;
+  display: inline-block;
+  float: left;
+}
+.nav__title_ctr {
+  display: inline-block;
+  vertical-align: middle;
+  float: left;
+  height: 48px;
+}
+.nav__title {
+  padding: 14px 16px 0;
+  display: inline-block;
+
+}
+.logo img {
+  height: 24px;
+}
+.main {
+  margin: 24px auto 24px;
+  width: 1132px;
+}
+.intro {
+  height: 48px;
+  margin-bottom: 24px;
+  display: flex;
+}
+.intro__content {
+  padding-top: 10px;
+  flex: 3;
+}
+.configSet, .successInfo {
+  display: none;
+  font-size: 14px;
+  padding-left: 16px;
+  background: #92CF54;
+  color: #fafafa;
+  min-height: 48px;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+  border-radius: 2px;
+  align-items: center;
+  flex: 1;
+}
+.errorInfo {
+  display: none;
+  font-size: 14px;
+  padding-left: 16px;
+  background: #F54E25;
+  color: #fafafa;
+  min-height: 48px;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+  border-radius: 2px;
+  align-items: center;
+  flex: 1;
+}
+.exampleCtr {
+  display: flex;
+}
+.exampleCol {
+  flex: 1;
+}
+.exampleCol:first-of-type {
+  margin-right: 12px;
+}
+form label {
+  font-weight: bold;
+  margin: 12px 0 6px;
+  display: inline-block;
+}
+input {
+  width: 400px;
+  padding: 8px;
+}
+.btn {
+  padding: 0 16px;
+  line-height: 38px;
+  background: #49AFEA;
+  color: #fff;
+  border-radius: 2px;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 24px;
+  cursor: pointer;
+}
+.exampleCode {
+  border: 1px solid #DDE4E9;
+  border-radius: 2px;
+  padding: 24px;
+  display: inline-block;
+  width: 510px;
+  min-height: 262px;
+  box-shadow: 0px 2px 3px 0px rgba(51, 62, 75, 0.08);
+  background: #fff;
+}
+.exampleTitle {
+  color: #49AFEA;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+.exampleData {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 12px;
+  word-wrap: break-word;
+}
+.codeLine {
+  padding-left: 12px;
+  display: block;
+}
+.helper {
+  font-style: italic;
+  font-size: 12px;
+}
+.required {
+  color: #F54E25;
+}

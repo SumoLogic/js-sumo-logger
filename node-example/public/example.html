@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Sumo Logic JS Logging SDK Node.js Example Page</title>
+  <link rel="shortcut icon" href="../favicon.ico" type="image/vnd.microsoft.icon"></link>
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+  <link rel="stylesheet" href="../example.css">
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+  <div class="nav">
+    <div class="logo"><img src="../navbar-logo.svg" alt="Sumo Logic" height="44"></div>
+    <div class="nav__title_ctr"><div class="nav__title">JavaScript Logging SDK Node.js Example Page</div></div>
+  </div>
+
+  <div class="main">
+    <div class="intro">
+      <div class="intro__content"><strong>Note: For this example to work you must enter a real <span class="exampleData">Sumo HTTP Source endpoint</span> in the form below or in the server-side node.js code.</strong></div>
+      <div class="configSet">&check; Your configuration was stored.</div>
+      <div class="successInfo">&check; Your logs were sent to Sumo Logic!</div>
+      <div class="errorInfo">Error: Logs were not sent to Sumo Logic!</div>
+    </div>
+
+    <div class="exampleCtr">
+      <div class="exampleCol">
+        <div class="exampleCode">
+          <form action="">
+            <div class="exampleTitle">Set Test Configuration</div>
+            <div>
+              <label for="endpoint">Endpoint</label><br>
+              <input type="url" id="endpoint" placeholder="https://collectors.sumologic.com/receiver/v1/http/yourEndPointToken"><br>
+              <span class="helper">Enter the URL for your HTTP source.</span>
+            </div>
+            <div>
+              <label for="interval">Sync Interval</label><br>
+              <input type="number" id="interval" value="5000">
+            </div>
+          </form>
+          <span class="btn" onclick="configure(true)">Configure Endpoint and Interval</span>
+        </div>
+        <br><br>
+        <div class="exampleCode">
+          <div class="exampleTitle">Example Configuration</div>
+          <div class="exampleData">
+            var sumoLogger = require('./sumoLogger.js');<br><br>
+            var opts = {<br>
+            <div class="codeLine">    endpoint: 'your https endpoint',</div>
+            <div class="codeLine">    clientUrl: '',</div>
+            <div class="codeLine">    interval: 10000,</div>
+            <div class="codeLine">    sessionKey: 'Abc32df34rfg54gui8j098dv13sq5re', // generate a GUID or inject standard session key</div>
+            <div class="codeLine">    sourceName: 'My Custom App',</div>
+            <div class="codeLine">    sourceCategory: 'My Source Category',</div>
+            <div class="codeLine">    hostName: 'My Host Name',</div>
+            <div class="codeLine">    successCB: function () { console.log('Sumo Logic success callback executed'); },</div>
+            <div class="codeLine">    errorCB: function () { console.log('Sumo Logic error callback executed'); }</div>
+            };
+          </div><br>
+          <div class="exampleData">var logSumo = new sumoLogger(opts);</div>
+        </div>
+      </div>
+
+      <div class="exampleCol">
+        <div class="exampleCode">
+          <div class="exampleTitle">Example: Text Logs (optional Client URL)</div>
+          <form action="">
+            <div>
+              <label for="message">Message to Log <span class="required">*</span></label><br>
+              <input type="text" id="message" placeholder="Leave empty to use default logs"><br>
+              <span class="helper">Use __msg__ to separate multiple log lines.</span>
+            </div>
+            <div>
+              <label for="url">Client URL</label><br>
+              <input type="text" id="url" placeholder="Leave empty to use default client URL"><br>
+            </div>
+          </form>
+          <span class="btn" onclick="sendTheLog(false, document.getElementById('url').value)">Send Text Log</span>
+        </div>
+
+        <br><br>
+
+        <div class="exampleCode">
+          <div class="exampleTitle">Example: JSON Logs</div>
+          <div class="exampleData">
+            var messageData = [<br>
+            &nbsp;&nbsp;{'testingKey': 'Testing from example page'},<br>
+            &nbsp;&nbsp;{'testingKey': 'Second test log line'}<br>
+            ];<br>
+            SLLogger.log(messageData);
+          </div>
+          <span class="btn" onclick="sendTheLog(true)">Send JSON with App-wide Category Log</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function configure(showSuccess) {
+      var host = location.hostname;
+      var sumoTestEndpoint = document.getElementById('endpoint').value;
+      var interval = document.getElementById('interval').value;
+      interval = (interval ===  '') ? 5000 : parseInt(interval);
+
+      $.post('/updateConfig', {
+        endpoint: sumoTestEndpoint,
+        interval: interval
+      }).then(function (result) {
+        if (showSuccess) {
+          var el = document.querySelector('.configSet');
+          el.style.display = 'flex';
+          setTimeout(function () {
+            el.style.display = 'none';
+          }, 5000);
+        }
+      });
+    }
+
+    function sendTheLog(sendJSON, url) {
+
+      var msgSep = '__msg__';
+      var data;
+      if (sendJSON) {
+        data = [{'testingKey': 'Testing from example page'}, {'testingKey': 'Second test log line'}, 'plain text in with two json objects'];
+      } else {
+        data = document.getElementById('message').value;
+        if (data === '') {
+          data = 'Example test log line 1 from SDK example page';
+        } else if (data.indexOf(msgSep) > -1) {
+          data = data.split(msgSep).map(function (msg) {
+            return msg.trim();
+          });
+        }
+      }
+
+      var clientUrl = url ? url : false;
+      data = {msg: data, url: clientUrl};
+      $.post('/sendLog', data);
+
+      return false;
+    }
+  </script>
+</body>
+</html>

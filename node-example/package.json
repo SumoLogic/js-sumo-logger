@@ -1,0 +1,32 @@
+{
+  "name": "node-example",
+  "version": "1.0.0",
+  "description": "Sumo Logic Javascript Logging SDK Node Example App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SumoLogic/js-logging-sdk.git"
+  },
+  "keywords": [
+    "Sumo",
+    "Logging",
+    "Logging",
+    "Log",
+    "Analytics"
+  ],
+  "author": "Sumo Logic",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/SumoLogic/js-logging-sdk/issues"
+  },
+  "homepage": "https://github.com/SumoLogic/js-logging-sdk#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "request": "^2.81.0",
+    "underscore": "^1.8.3"
+  }
+}

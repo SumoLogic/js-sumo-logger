@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Sumo Logic JS Logging SDK Example</title>
+  <link rel="shortcut icon" href="../example/favicon.ico" type="image/vnd.microsoft.icon"></link>
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+  <link rel="stylesheet" href="../example/example.css">
+</head>
+<body>
+  <div class="nav">
+    <div class="logo"><img src="../example/navbar-logo.svg" alt="Sumo Logic" height="44"></div>
+    <div class="nav__title_ctr"><div class="nav__title">JavaScript Logging SDK Example Page</div></div>
+  </div>
+
+  <div class="main">
+    <div class="intro">
+      <div class="intro__content"><strong>Note: For this example to work you must enter a real <span class="exampleData">Sumo HTTP Source endpoint</span> in the form below.</strong></div>
+      <div class="configSet">&check; Your configuration was stored.</div>
+      <div class="successInfo">&check; Your logs were sent to Sumo Logic!</div>
+      <div class="errorInfo">Error: Logs were not sent to Sumo Logic!</div>
+    </div>
+
+    <div class="exampleCtr">
+      <div class="exampleCol">
+        <div class="exampleCode">
+          <form action="">
+            <div class="exampleTitle">Set Test Configuration</div>
+            <div>
+              <label for="endpoint">Endpoint <span class="required">*</span></label><br>
+              <input type="url" id="endpoint" placeholder="https://collectors.sumologic.com/receiver/v1/http/yourEndPointToken"><br>
+              <span class="helper">Enter the URL for your HTTP source.</span>
+            </div>
+            <div>
+              <label for="interval">Sync Interval</label><br>
+              <input type="number" id="interval" value="5000">
+            </div>
+          </form>
+          <span class="btn" onclick="configure(true)">Configure Endpoint and Interval</span>
+        </div>
+        <br><br>
+        <div class="exampleCode">
+          <div class="exampleTitle">Example Configuration</div>
+          <div class="exampleData">
+            var host = location.hostname;<br><br>
+            var sumotestendpoint = 'endpointURL';<br><br>
+            SLLogger.config({
+            <span class="codeLine">endpoint: sumotestendpoint,</span>
+            <span class="codeLine">sessionKey: 'your Session ID',</span>
+            <span class="codeLine">sourceName: 'your source name',</span>
+            <span class="codeLine">sourceCategory: 'your SourceCategory',</span>
+            <span class="codeLine">hostName: host,</span>
+            <span class="codeLine">successCB: function() { ... handle success ... },</span>
+            <span class="codeLine">errorCB: function() { ... handle error ... }</span>
+            });
+          </div>
+        </div>
+      </div>
+
+      <div class="exampleCol">
+        <div class="exampleCode">
+          <div class="exampleTitle">Example: Text Logs</div>
+          <form action="">
+            <div>
+              <label for="message">Message to Log <span class="required">*</span></label><br>
+              <input type="text" id="message" placeholder="Leave empty to use default logs"><br>
+              <span class="helper">Use __msg__ to separate multiple log lines.</span>
+            </div>
+          </form>
+          <span class="btn" onclick="sendTheLog(false)">Send Text</span>
+        </div>
+
+        <br><br>
+
+        <div class="exampleCode">
+          <div class="exampleTitle">Example: JSON Logs</div>
+          <div class="exampleData">
+            var messageData = [<br>
+            &nbsp;&nbsp;{'testingKey': 'Testing from example page'},<br>
+            &nbsp;&nbsp;{'testingKey': 'Second test log line'}<br>
+            ];<br>
+            SLLogger.log(messageData);
+          </div>
+          <span class="btn" onclick="sendTheLog(true)">Send JSON with App-wide Category Log</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="../src/sumologic.logger.js"></script>
+  <script>
+    var isConfigured = false;
+
+    function configure(showSuccess) {
+      var host = location.hostname;
+      var sumoTestEndpoint = document.getElementById('endpoint').value;
+      if (sumoTestEndpoint === '') {
+        alert('Please enter your endpoint URL to run a test');
+        return;
+      }
+
+      var interval = document.getElementById('interval').value;
+      interval = (interval ===  '') ? 5000 : parseInt(interval);
+
+      SLLogger.config({
+        endpoint: sumoTestEndpoint,
+        interval: interval,
+        sessionKey: 'Abc32df34rfg54gui8j098dv13sq5re',
+        sourceName: 'wsl JS sdk test source',
+        sourceCategory: 'made-up-cat-primary',
+        hostName: host,
+        successCB: function () {
+          var el = document.querySelector('.successInfo');
+          el.style.display = 'flex';
+          setTimeout(function () {
+            el.style.display = 'none';
+          }, 5000);
+        },
+        errorCB: function () {
+          var el = document.querySelector('.errorInfo');
+          el.style.display = 'flex';
+          setTimeout(function () {
+            el.style.display = 'none';
+          }, 3000);
+        }
+      });
+
+      isConfigured = true;
+
+      if (showSuccess) {
+        var el = document.querySelector('.configSet');
+        el.style.display = 'flex';
+        setTimeout(function () {
+          el.style.display = 'none';
+        }, 5000);
+      }
+    }
+
+    function sendTheLog(sendJSON) {
+      if (!isConfigured) {
+        configure();
+      }
+
+      var msgSep = '__msg__';
+      var data;
+      if (sendJSON) {
+        data = [{'testingKey': 'Testing from example page'}, {'testingKey': 'Second test log line'}, 'plain text in with two json objects'];
+      } else {
+        data = document.getElementById('message').value;
+        if (data === '') {
+          data = 'Example test log line 1 from SDK example page';
+        } else if (data.indexOf(msgSep) > -1) {
+          data = data.split(msgSep).map(function (msg) {
+            return msg.trim();
+          });
+        }
+      }
+
+      SLLogger.log(data);
+
+      return false;
+    }
+  </script>
+</body>
+</html>
