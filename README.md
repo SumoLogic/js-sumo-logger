@@ -26,9 +26,24 @@ Messages are batched and sent at the configured interval; default is zero, meani
 
 ## Installation
 
+**Prerequisites**
+
+You must have an HTTP source in your Sumo Logic account to use this SDK. To create one:
+* log into Sumo Logic,
+* go to the Collectors page, and,
+* **either** add a new HTTP source to a new or existing Hosted Collector **or** select an existing HTTP source.
+
+You’ll need the endpoint URL to configure the logger object.
+
+If you don't have a Sumo Logic account yes, you can easily create one by going to https://www.sumologic.com and clicking the Free Trial button--no cost, just enter your email.
+
+You must also have Node.js/npm installed to use the SDK. [Node installation](https://docs.npmjs.com/getting-started/installing-node)
+
+Please review the Security Note at the end of this article before planning your implementation.
+
 **Using NPM:**
-```javascript
-npm install --save sumologic-logger
+```
+$ npm install --save sumologic-logger
 ```
 
 **From GitHub:**
@@ -72,39 +87,39 @@ Before sending any messages your page should set up the SumoLogger object. Of al
 
 To send your logs, the script must know which HTTP Source to use. Pass this value (which you can get from the Collectors page) in the `endpoint` parameter.
 
-*interval (Optional):*
+*interval (optional):*
 
 A number of milliseconds. Messages will be batched and sent at the interval specified. Default value is zero, meaning messages are sent each time `log()` is called.
 
-*SuccessCB (Optional)*
+*SuccessCB (optional)*
 
 You can provide a function that is executed only when logs are successfully sent. The only information you can be sure of in the callback is that the call succeeded. There is no other response information.
 
-*errorCb (Optional)*
+*errorCb (optional)*
 
 You can provide a function that is executed if an error occurs when the logs are sent.
 
-*clientUrl (Optional, Node version only)*
+*clientUrl (optional, Node version only)*
 
 You can provide a URL, in the Node version of this SDK only, which will be sent as the `url` field of the log line. In the vanilla JS version, the URL is detected from the browser's `window.location` value.
 
-*sendErrors (Optional):*
+*sendErrors (optional):*
 
 Setting `sendErrors` to `true` will send all the unhandled errors to Sumo Logic with the error message, URL, line number, and column number. This attribute plays well with any other window.onerror functions that have been defined.
 
-*sessionKey (Optional)*
+*sessionKey (optional)*
 
 To identify specific user sessions, set a value for this field.
 
-*hostName (Optional)*
+*hostName (optional)*
 
 This value identifies the host from which the log is being sent.
 
-*sourceCategory (Optional)*
+*sourceCategory (optional)*
 
 This value sets the Source Category for the logged message.
 
-*sourceName*
+*sourceName (optional)*
 
 This value sets the Source Name for the logged message.
 
@@ -132,14 +147,18 @@ Override client URL set in the `config` call. (Node version only)
   var opts = {
     endpoint: "https://us2-events.sumologic.com/receiver/v1/http/222loremipsumetc32FG",
     interval: 20000, // Send messages in batches every 20 seconds
-    sendErrors: true,   // DEFAULT FALSE, Only pass this to NOT send all unhandled errors to Sumo Logic
+    sendErrors: true,
     sessionKey: 'Abc32df34rfg54gui8j098dv13sq5re', // generate a GUID
     sourceName: 'My Custom App',
     sourceCategory: 'My Source Category',
-    hostName: 'My Host Name'
-    successCB: function() { ... handle success .... },
-    errorCB: function() { ... handle error .... }
-  });
+    hostName: 'My Host Name',
+    successCB: function() { 
+      // ... handle success .... 
+    },
+    errorCB: function() {
+      // ... handle error .... 
+    }
+  };
 ```
 
 **Node.js:**
@@ -156,7 +175,10 @@ Override client URL set in the `config` call. (Node version only)
     var sumoLogger = new SumoLogger(opts);
     
     // Push a message to be logged
-    sumoLogger.log('event message to log', /* {... any per message options ... }*/);
+    sumoLogger.log('event message to log', {
+      sessionKey: 'your session key value',
+      url: 'https://youDomain.com/actual/page/served'
+    });
     
     // Flush any logs, typically this line would be in your shutdown code
     sumoLogger.flushLogs();
@@ -164,9 +186,8 @@ Override client URL set in the `config` call. (Node version only)
 
 **Browser Apps:**
 
-```javascript
+```html
 <script>
-  var SLLogger = SLLogger || [];
   // Configure the logger
   SLLogger.config({
     endpoint: "https://us2-events.sumologic.com/receiver/v1/http/222loremipsumetc32FG",
@@ -204,9 +225,9 @@ Override client URL set in the `config` call. (Node version only)
 
 Sumo Logic is always concerned with security but in some instances we must balance risks with value of functionality. Using the vanilla JS version of this library is one such situation.
 
-Hitting an HTTP source endoppint from code running in a web browser exposes the endpoint URL to anyone inspecting the code or running your app with the browser console open to the network tab. There is no means to obfuscate or hide this. The risk is some malicious individual will send additional traffic to the endpoint, potentially using up your ingest or polluting your searches.
+Hitting an HTTP source endpoint from code running in a web browser exposes the endpoint URL to anyone inspecting the code or running your app with the browser console open to the network tab. There is no means to obfuscate or hide this. The risk is some malicious individual will send additional traffic to the endpoint, potentially using up your ingest or polluting your searches.
 
-If this is a concern for you, we recommend using the Node.js version of the lib so your endpoint URL is never exposed.
+If this is a concern for you, **we recommend using the Node.js version of the lib** so your endpoint URL is never exposed.
  
 One method for minimizing the damage from some malicious users, should you choose to use this or other similar code in the browser, is adding an arbitrary string based on a regex to your log message and adding a processing rule to the HTTP source configuration that blocks incoming messages which lack a match for the regex.
 
@@ -220,8 +241,8 @@ For example, if you use the Grunt server explained above, the tests will run at 
 
 For a shortcut you may use the included npm test script, which will start the Grunt server and open the testRunner page:
 
-```javascript
-npm run test
+```
+$ npm run test
 ````
 
 ## Issues

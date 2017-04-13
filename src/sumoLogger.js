@@ -1,7 +1,7 @@
 var request = require('request');
 var _ = require('underscore');
 
-var DEFAULT_INTERVAL = 5000;
+var DEFAULT_INTERVAL = 0;
 var SESSION_KEY = 'sumologic.logger.session';
 
 var originalOpts = {};
@@ -19,7 +19,7 @@ function getUUID() {
 function setConfig(opts) {
   currentConfig = {
     endpoint: opts.endpoint,
-    clientUrl: opts.clientUrl,
+    clientUrl: opts.clientUrl || '',
     interval: opts.interval || DEFAULT_INTERVAL,
     sourceName: opts.sourceName || '',
     hostName: opts.hostName || '',
@@ -73,7 +73,7 @@ function sendLogs() {
 }
 
 function SumoLogger(opts) {
-  if (!opts || !opts.hasOwnProperty('endpoint') || opts.endpoint === '') {
+  if (!opts || !opts.hasOwnProperty('endpoint') || opts.endpoint === undefined || opts.endpoint === '') {
     console.error('Sumo Logic Logger requires you to set an endpoint.');
     return;
   }
@@ -121,8 +121,6 @@ SumoLogger.prototype.log = function(msg, optConfig) {
     console.error('Sumo Logic Logger requires that you pass a value to log.');
     return;
   }
-
-  optConfig = optConfig || false;
 
   var isArray = msg instanceof Array;
   var testEl = isArray ? msg[0] : msg;
