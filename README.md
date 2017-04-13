@@ -27,7 +27,9 @@ Messages are batched and sent at the configured interval; default is zero, meani
 ## Installation
 
 **Using NPM:**
-* `npm install --save sumologic-logger`
+```javascript
+npm install --save sumologic-logger
+```
 
 **From GitHub:**
 * Download or clone this repo.
@@ -66,43 +68,43 @@ Use a local server to serve up the `example/example.html` file included in this 
 
 Before sending any messages your page should set up the SumoLogger object. Of all the configurable attributes, only `endpoint` is required and all others are optional.
 
-*Endpoint (Required):*
+*endpoint (Required):*
 
 To send your logs, the script must know which HTTP Source to use. Pass this value (which you can get from the Collectors page) in the `endpoint` parameter.
 
-*Sync Interval (Optional):*
+*interval (Optional):*
 
 A number of milliseconds. Messages will be batched and sent at the interval specified. Default value is zero, meaning messages are sent each time `log()` is called.
 
-*Success Callback (Optional)*
+*SuccessCB (Optional)*
 
 You can provide a function that is executed only when logs are successfully sent. The only information you can be sure of in the callback is that the call succeeded. There is no other response information.
 
-*Error Callback (Optional)*
+*errorCb (Optional)*
 
 You can provide a function that is executed if an error occurs when the logs are sent.
 
-*Client URL (Optional, Node version only)*
+*clientUrl (Optional, Node version only)*
 
 You can provide a URL, in the Node version of this SDK only, which will be sent as the `url` field of the log line. In the vanilla JS version, the URL is detected from the browser's `window.location` value.
 
-*Send Errors (Optional):*
+*sendErrors (Optional):*
 
 Setting `sendErrors` to `true` will send all the unhandled errors to Sumo Logic with the error message, URL, line number, and column number. This attribute plays well with any other window.onerror functions that have been defined.
 
-*Session Key (Optional)*
+*sessionKey (Optional)*
 
 To identify specific user sessions, set a value for this field.
 
-*Host Name (Optional)*
+*hostName (Optional)*
 
 This value identifies the host from which the log is being sent.
 
-*Source Category (Optional)*
+*sourceCategory (Optional)*
 
 This value sets the Source Category for the logged message.
 
-*Source Name*
+*sourceName*
 
 This value sets the Source Name for the logged message.
 
@@ -110,15 +112,23 @@ This value sets the Source Name for the logged message.
 
 All variants of the log call take an optional object parameter, which can include any of the following fields:
 
-* `timestamp`: Defaults to `new Date()` called when processing the `log` call. Use this when the event being logged occurred at a different time than when the log was sent.
-* `sessionKey`: Override a session key set in the `config` call.
-* `url`: Override client URL set in the `config` call. (Node version only)
+*timestamp:*
+
+Defaults to `new Date()` called when processing the `log` call. Use this when the event being logged occurred at a different time than when the log was sent.
+
+*sessionKey:*
+
+Override a session key set in the `config` call.
+
+*url*
+
+Override client URL set in the `config` call. (Node version only)
 
 ### Usage Examples
 
 **Full configuration:**
 
-```
+```javascript
   var opts = {
     endpoint: "https://us2-events.sumologic.com/receiver/v1/http/222loremipsumetc32FG",
     interval: 20000, // Send messages in batches every 20 seconds
@@ -134,12 +144,12 @@ All variants of the log call take an optional object parameter, which can includ
 
 **Node.js:**
 
-```
+```javascript
     var sumoLogic = require('sumologic-logger-node');
     var opts = {
         endpoint: 'your HTTP Source endpoint',
-        clientUrl: 'http://yourDomain.com/path/to/page', // NODE version only,
-        ... any other options ...
+        clientUrl: 'http://yourDomain.com/path/to/page' // NODE version only,
+        // ... any other options ...
     };
     
     // Instantiate the SumoLogger
@@ -152,10 +162,9 @@ All variants of the log call take an optional object parameter, which can includ
     sumoLogger.flushLogs();
 ```
 
-
 **Browser Apps:**
 
-```
+```javascript
 <script>
   var SLLogger = SLLogger || [];
   // Configure the logger
@@ -209,7 +218,11 @@ To run the tests, open `jasminetest/sumologic-logger-spec.js` and update the `su
 
 For example, if you use the Grunt server explained above, the tests will run at `https://127.0.0.1:8282/jasminetest/TrackerSpecRunner.html`.
 
-For a shortcut you may use the npm test script, which will start the Grunt server and open the testRunner page.
+For a shortcut you may use the included npm test script, which will start the Grunt server and open the testRunner page:
+
+```javascript
+npm run test
+````
 
 ## Issues
 
