@@ -30,10 +30,10 @@ Messages are batched and sent at the configured interval; default is zero, meani
 
 You must have an HTTP source in your Sumo Logic account to use this SDK. To create one:
 * log into Sumo Logic,
-* go to the Collectors page, and,
+* go to the Manage Collection page, and,
 * **either** add a new HTTP source to a new or existing Hosted Collector **or** select an existing HTTP source.
 
-You’ll need the endpoint URL to configure the logger object.
+You’ll need the endpoint URL to configure the logger object. You can get it by clicking the `Show URL` link for the source on the Manage Collection page.
 
 If you don't have a Sumo Logic account yes, you can easily create one by going to https://www.sumologic.com and clicking the Free Trial button--no cost, just enter your email.
 
