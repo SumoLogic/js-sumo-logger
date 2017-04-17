@@ -8,10 +8,10 @@ var opts = {
   sourceName: 'My Custom App',
   sourceCategory: 'My Source Category',
   hostName: 'My Host Name',
-  successCB: function () {
+  onSuccess: function () {
     console.log('Sumo Logic success callback executed');
   },
-  errorCB: function () {
+  onError: function () {
     console.log('Sumo Logic error callback executed');
   }
 };

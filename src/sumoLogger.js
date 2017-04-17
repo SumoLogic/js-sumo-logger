@@ -25,8 +25,8 @@ function setConfig(opts) {
     hostName: opts.hostName || '',
     sourceCategory: opts.sourceCategory || '',
     session: SESSION_KEY + (opts.sessionKey ? opts.sessionKey : getUUID()),
-    successCB: opts.successCB || false,
-    errorCb: opts.hasOerrorCB || false
+    onSuccess: opts.onSuccess || false,
+    onError: opts.hasOonError || false
   };
 }
 
@@ -56,18 +56,18 @@ function sendLogs() {
     }, function (error, response) {
       var err = !!error || response.status < 200 || response.status >= 400;
 
-      if (err && currentConfig.hasOwnProperty('errorCb')) {
-        currentConfig.errorCB();
+      if (err && currentConfig.hasOwnProperty('onError')) {
+        currentConfig.onError();
       } else {
-        if (currentConfig.hasOwnProperty('successCB')) {
-          currentConfig.successCB();
+        if (currentConfig.hasOwnProperty('onSuccess')) {
+          currentConfig.onSuccess();
         }
         currentLogs = [];
       }
     });
   } catch (ex) {
-    if (currentConfig.hasOwnProperty('errorCB')) {
-      currentConfig.errorCB();
+    if (currentConfig.hasOwnProperty('onError')) {
+      currentConfig.onError();
     }
   }
 }

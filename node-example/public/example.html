@@ -52,8 +52,8 @@
             <div class="codeLine">    sourceName: 'My Custom App',</div>
             <div class="codeLine">    sourceCategory: 'My Source Category',</div>
             <div class="codeLine">    hostName: 'My Host Name',</div>
-            <div class="codeLine">    successCB: function () { console.log('Sumo Logic success callback executed'); },</div>
-            <div class="codeLine">    errorCB: function () { console.log('Sumo Logic error callback executed'); }</div>
+            <div class="codeLine">    onSuccess: function () { console.log('Sumo Logic success callback executed'); },</div>
+            <div class="codeLine">    onError: function () { console.log('Sumo Logic error callback executed'); }</div>
             };
           </div><br>
           <div class="exampleData">var logSumo = new sumoLogger(opts);</div>

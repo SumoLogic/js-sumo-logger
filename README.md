@@ -91,11 +91,11 @@ To send your logs, the script must know which HTTP Source to use. Pass this valu
 
 A number of milliseconds. Messages will be batched and sent at the interval specified. Default value is zero, meaning messages are sent each time `log()` is called.
 
-*SuccessCB (optional)*
+*onSuccess (optional)*
 
 You can provide a function that is executed only when logs are successfully sent. The only information you can be sure of in the callback is that the call succeeded. There is no other response information.
 
-*errorCb (optional)*
+*onError (optional)*
 
 You can provide a function that is executed if an error occurs when the logs are sent.
 
@@ -152,10 +152,10 @@ Override client URL set in the `config` call. (Node version only)
     sourceName: 'My Custom App',
     sourceCategory: 'My Source Category',
     hostName: 'My Host Name',
-    successCB: function() { 
+    onSuccess: function() { 
       // ... handle success .... 
     },
-    errorCB: function() {
+    onError: function() {
       // ... handle error .... 
     }
   };

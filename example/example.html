@@ -50,8 +50,8 @@
             <span class="codeLine">sourceName: 'your source name',</span>
             <span class="codeLine">sourceCategory: 'your SourceCategory',</span>
             <span class="codeLine">hostName: host,</span>
-            <span class="codeLine">successCB: function() { ... handle success ... },</span>
-            <span class="codeLine">errorCB: function() { ... handle error ... }</span>
+            <span class="codeLine">onSuccess: function() { ... handle success ... },</span>
+            <span class="codeLine">onError: function() { ... handle error ... }</span>
             });
           </div>
         </div>
@@ -108,14 +108,14 @@
         sourceName: 'wsl JS sdk test source',
         sourceCategory: 'made-up-cat-primary',
         hostName: host,
-        successCB: function () {
+        onSuccess: function () {
           var el = document.querySelector('.successInfo');
           el.style.display = 'flex';
           setTimeout(function () {
             el.style.display = 'none';
           }, 5000);
         },
-        errorCB: function () {
+        onError: function () {
           var el = document.querySelector('.errorInfo');
           el.style.display = 'flex';
           setTimeout(function () {

@@ -13,8 +13,8 @@
     this.hostName = '';
     this.sourceCategory = '';
     this.name = '';
-    this.successCB = false;
-    this.errorCB = false;
+    this.onSuccess = false;
+    this.onError = false;
   }
 
   function getUUID() {
@@ -114,12 +114,12 @@
         this.hostName = opts.hostName;
       }
 
-      if (opts.successCB) {
-        this.successCB = opts.successCB;
+      if (opts.onSuccess) {
+        this.onSuccess = opts.onSuccess;
       }
 
-      if (opts.errorCB) {
-        this.errorCB = opts.errorCB;
+      if (opts.onError) {
+        this.onError = opts.onError;
       }
 
       if (this.interval > 0) {
@@ -212,14 +212,14 @@
       try {
         var xmlHttp = new XMLHttpRequest();
 
-        if (this.errorCB) {
-          xmlHttp.addEventListener('error', this.errorCB);
+        if (this.onError) {
+          xmlHttp.addEventListener('error', this.onError);
         }
-        if (this.successCB) {
-          var successCB = this.successCB;
+        if (this.onSuccess) {
+          var onSuccess = this.onSuccess;
           xmlHttp.addEventListener('load', function() {
             currentLogs = [];
-            successCB();
+            onSuccess();
           });
         }
         xmlHttp.open('POST', this.endpoint + '?callback=logSent', true);
@@ -236,8 +236,8 @@
 
         xmlHttp.send(currentLogs.join('\n'));
       } catch (ex) {
-        if (this.errorCB) {
-          this.errorCB();
+        if (this.onError) {
+          this.onError();
         }
       }
     },
