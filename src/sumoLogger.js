@@ -26,7 +26,7 @@ function setConfig(opts) {
     sourceCategory: opts.sourceCategory || '',
     session: SESSION_KEY + (opts.sessionKey ? opts.sessionKey : getUUID()),
     onSuccess: opts.onSuccess || false,
-    onError: opts.hasOonError || false
+    onError: opts.onError || false
   };
 }
 
