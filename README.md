@@ -43,7 +43,7 @@ Please review the Security Note at the end of this article before planning your 
 
 **Using NPM:**
 ```
-$ npm install --save sumologic-logger
+$ npm install --save sumo-logger
 ```
 
 **From GitHub:**
