@@ -164,7 +164,7 @@ Override client URL set in the `config` call. (Node version only)
 **Node.js:**
 
 ```javascript
-    var sumoLogic = require('sumologic-logger-node');
+    var sumoLogic = require('sumo-logger');
     var opts = {
         endpoint: 'your HTTP Source endpoint',
         clientUrl: 'http://yourDomain.com/path/to/page' // NODE version only,
