@@ -99,7 +99,7 @@
       this.setSession(opts.sessionKey ? opts.sessionKey : getUUID());
 
       if (opts.sendErrors) {
-        setSendError(opts.sendErrors);
+        setSendError(this, opts.sendErrors);
       }
 
       if (opts.sourceName) {
