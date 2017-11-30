@@ -1,4 +1,5 @@
 (function(window, document) {
+  'use strict';
   var SESSION_KEY = 'sumologic.logger.session';
   var SESSION_KEY_LEN = SESSION_KEY.length + 1;
 
@@ -20,7 +21,7 @@
   function getUUID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       var piece = Math.random() * 16 | 0;
-      var elem = c == 'x' ? piece : (piece & 0x3 | 0x8);
+      var elem = c === 'x' ? piece : (piece & 0x3 | 0x8);
       return elem.toString(16);
     });
   }
@@ -37,7 +38,7 @@
     if(logger.sendErrors === true){
       var _onerror = window.onerror;
       window.onerror = function (msg, url, line, col){
-        var msg = 'message: ' + msg + ', url: ' + url + ', line_num: ' + line + ', col_num: ' + col;
+        msg = 'message: ' + msg + ', url: ' + url + ', line_num: ' + line + ', col_num: ' + col;
         logger.log({
           error: 'BrowserJsException',
           exception: msg
@@ -124,8 +125,8 @@
 
       if (this.interval > 0) {
         var that = this;
-        var sync = setInterval(function() {
-          that.sendLogs()
+        setInterval(function() {
+          that.sendLogs();
         }, this.interval);
       }
     },
@@ -174,7 +175,7 @@
 
       var that = this;
       var msgs = msg.map(function (item) {
-        if (typeof item === "string") {
+        if (typeof item === 'string') {
           return JSON.stringify({
             msg:       item,
             sessionId: that.session,
