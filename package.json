@@ -9,10 +9,10 @@
     "test": "npm run http-server && open https://127.0.0.1:8282/jasminetest/TrackerSpecRunner.html"
   },
   "dependencies": {
+    "axios": "^0.17.1",
     "express": "^4.13.4",
     "express-generator": "^4.13.1",
-    "request": "^2.79.0",
-    "underscore": "^1.8.3"
+    "lodash": "^4.17.4"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
