@@ -35,6 +35,8 @@ function sendLogs() {
     return;
   }
   var tempCategory = '';
+  var logsToSend = currentLogs;
+  currentLogs = [];
 
   try {
     var headers = {'Content-Type': 'application/json'};
@@ -52,23 +54,26 @@ function sendLogs() {
       method: 'POST',
       url: currentConfig.endpoint,
       headers: headers,
-      body: currentLogs.concat('\n')
+      body: logsToSend.concat('\n')
     }, function (error, response) {
       var err = !!error || response.status < 200 || response.status >= 400;
 
-      if (err && currentConfig.hasOwnProperty('onError')) {
-        currentConfig.onError();
+      if (err) {
+        if(currentConfig.onError && typeof currentConfig.onError === 'function') {
+          currentConfig.onError();
+        }
+        currentLogs.concat(logsToSend);
       } else {
-        if (currentConfig.hasOwnProperty('onSuccess')) {
+        if (currentConfig.onSuccess && typeof currentConfig.onSuccess === 'function') {
           currentConfig.onSuccess();
         }
-        currentLogs = [];
       }
     });
   } catch (ex) {
-    if (currentConfig.hasOwnProperty('onError')) {
+    if (currentConfig.onError && typeof currentConfig.onError === 'function') {
       currentConfig.onError();
     }
+    currentLogs.concat(logsToSend);
   }
 }
 
