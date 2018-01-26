@@ -56,17 +56,17 @@ function sendLogs() {
     }, function (error, response) {
       var err = !!error || response.status < 200 || response.status >= 400;
 
-      if (err && currentConfig.hasOwnProperty('onError')) {
+      if (err && currentConfig.onError && typeof currentConfig.onError === 'function') {
         currentConfig.onError();
       } else {
-        if (currentConfig.hasOwnProperty('onSuccess')) {
+        if (currentConfig.onSuccess && typeof currentConfig.onSuccess === 'function') {
           currentConfig.onSuccess();
         }
         currentLogs = [];
       }
     });
   } catch (ex) {
-    if (currentConfig.hasOwnProperty('onError')) {
+    if (currentConfig.onError && typeof currentConfig.onError === 'function') {
       currentConfig.onError();
     }
   }
