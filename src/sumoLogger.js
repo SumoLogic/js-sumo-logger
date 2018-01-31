@@ -48,36 +48,33 @@ function sendLogs() {
       assignIn(headers, {'X-Sumo-Host': currentConfig.hostName});
     }
 
-    currentLogs.forEach(function (logMessage) {
-      axios({
-        data: logMessage,
-        headers: headers,
-        method: 'post',
-        url: currentConfig.endpoint,
-      })
-        .then(function(response) {
-          if (response.status < 200 || response.status >= 400) {
-            throw new Error('Not 200');
-          }
+    axios({
+      data: currentLogs,
+      headers: headers,
+      method: 'post',
+      url: currentConfig.endpoint,
+    })
+      .then(function(response) {
+        if (response.status < 200 || response.status >= 400) {
+          throw new Error('Not 200');
+        }
 
+        if (currentConfig.hasOwnProperty('onSuccess')) {
+          currentConfig.onSuccess();
+        }
+
+        currentLogs = [];
+      })
+      .catch(function() {
+        if (currentConfig.hasOwnProperty('onError')) {
+          currentConfig.onError();
+        } else {
           if (currentConfig.hasOwnProperty('onSuccess')) {
             currentConfig.onSuccess();
           }
-
-          currentLogs = currentLogs.slice(1, currentLogs.length);
-        })
-        .catch(function() {
-          if (currentConfig.hasOwnProperty('onError')) {
-            currentConfig.onError();
-          } else {
-            if (currentConfig.hasOwnProperty('onSuccess')) {
-              currentConfig.onSuccess();
-            }
-          currentLogs = currentLogs.slice(1, currentLogs.length);
-          }
-        })
-    })
-
+        currentLogs = [];
+        }
+      })
   } catch (ex) {
     if (currentConfig.hasOwnProperty('onError')) {
       currentConfig.onError();
