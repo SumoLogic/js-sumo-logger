@@ -1,19 +1,21 @@
-var request = require('request');
-var _ = require('underscore');
+var assignIn = require('lodash/assignIn');
+var axios = require('axios');
+var isEmpty = require('lodash/isEmpty');
+
+// ---------------------------------------------------------------------------
 
 var DEFAULT_INTERVAL = 0;
 var SESSION_KEY = 'sumologic.logger.session';
 
-var originalOpts = {};
 var currentConfig = {};
 var currentLogs = [];
 
 function getUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
     var piece = Math.random() * 16 | 0;
-    var elem = c == 'x' ? piece : (piece & 0x3 | 0x8);
+    var elem = c === 'x' ? piece : (piece & 0x3 | 0x8);
     return elem.toString(16);
-  });
+  })
 }
 
 function setConfig(opts) {
@@ -27,44 +29,52 @@ function setConfig(opts) {
     session: SESSION_KEY + (opts.sessionKey ? opts.sessionKey : getUUID()),
     onSuccess: opts.onSuccess || false,
     onError: opts.onError || false
-  };
+  }
 }
 
 function sendLogs() {
   if (currentLogs.length === 0) {
     return;
   }
-  var tempCategory = '';
-
   try {
     var headers = {'Content-Type': 'application/json'};
     if (currentConfig.sourceName !== '') {
-      _.extend(headers, {'X-Sumo-Name': currentConfig.sourceName});
+      assignIn(headers, {'X-Sumo-Name': currentConfig.sourceName});
     }
     if (currentConfig.sourceCategory !== '') {
-      _.extend(headers, {'X-Sumo-Category': currentConfig.sourceCategory});
+      assignIn(headers, {'X-Sumo-Category': currentConfig.sourceCategory});
     }
     if (currentConfig.hostName !== '') {
-      _.extend(headers, {'X-Sumo-Host': currentConfig.hostName});
+      assignIn(headers, {'X-Sumo-Host': currentConfig.hostName});
     }
 
-    request({
-      method: 'POST',
-      url: currentConfig.endpoint,
+    axios({
+      data: currentLogs,
       headers: headers,
-      body: currentLogs.concat('\n')
-    }, function (error, response) {
-      var err = !!error || response.status < 200 || response.status >= 400;
+      method: 'post',
+      url: currentConfig.endpoint,
+    })
+      .then(function(response) {
+        if (response.status < 200 || response.status >= 400) {
+          throw new Error('Not 200');
+        }
 
-      if (err && currentConfig.hasOwnProperty('onError')) {
-        currentConfig.onError();
-      } else {
         if (currentConfig.hasOwnProperty('onSuccess')) {
           currentConfig.onSuccess();
         }
+
         currentLogs = [];
-      }
-    });
+      })
+      .catch(function() {
+        if (currentConfig.hasOwnProperty('onError')) {
+          currentConfig.onError();
+        } else {
+          if (currentConfig.hasOwnProperty('onSuccess')) {
+            currentConfig.onSuccess();
+          }
+        currentLogs = [];
+        }
+      })
   } catch (ex) {
     if (currentConfig.hasOwnProperty('onError')) {
       currentConfig.onError();
@@ -78,19 +88,18 @@ function SumoLogger(opts) {
     return;
   }
 
-  originalOpts = opts;
   setConfig(opts);
 
   if (currentConfig.interval > 0) {
-    var sync = setInterval(function() {
+    setInterval(function() {
       sendLogs();
-    }, currentConfig.interval);
+    }, currentConfig.interval)
   }
 }
 
-SumoLogger.prototype.updateConfig = function (newOpts) {
+SumoLogger.prototype.updateConfig = function(newOpts) {
   try {
-    if (!_.isEmpty(newOpts)) {
+    if (!isEmpty(newOpts)) {
       if (newOpts.endpoint) {
         currentConfig.endpoint = newOpts.endpoint;
       }
@@ -106,15 +115,15 @@ SumoLogger.prototype.updateConfig = function (newOpts) {
     return false;
   }
   return true;
-};
+}
 
-SumoLogger.prototype.emptyLogQueue = function () {
+SumoLogger.prototype.emptyLogQueue = function() {
   currentLogs = [];
-};
+}
 
-SumoLogger.prototype.flushLogs = function () {
+SumoLogger.prototype.flushLogs = function() {
   sendLogs();
-};
+}
 
 SumoLogger.prototype.log = function(msg, optConfig) {
   if (!msg) {
@@ -143,6 +152,7 @@ SumoLogger.prototype.log = function(msg, optConfig) {
   var ts = new Date();
   var sessKey = currentConfig.session;
   var client = {url: currentConfig.clientUrl};
+
   if (optConfig) {
     if (optConfig.hasOwnProperty('sessionKey')) {
       sessKey = optConfig.sessionKey;
@@ -153,15 +163,16 @@ SumoLogger.prototype.log = function(msg, optConfig) {
     }
 
     if (optConfig.hasOwnProperty('url')) {
-      client.url = optConfig.url
+      client.url = optConfig.url;
     }
   }
-  timestamp = ts.toUTCString();
 
-  var msgs = msg.map(function (item) {
-    if (typeof item === "string") {
-      return JSON.stringify(_.extend({
-        msg:       item,
+  var timestamp = ts.toUTCString();
+
+  var msgs = msg.map(function(item) {
+    if (typeof item === 'string') {
+      return JSON.stringify(assignIn({
+        msg: item,
         sessionId: sessKey,
         timestamp: timestamp
       }, client));
@@ -170,14 +181,14 @@ SumoLogger.prototype.log = function(msg, optConfig) {
         sessionId: sessKey,
         timestamp: timestamp
       };
-      return JSON.stringify(_.extend(curr, client, item));
+      return JSON.stringify(assignIn(curr, client, item));
     }
   });
 
-  currentLogs = currentLogs.concat(msgs);
+  currentLogs = currentLogs.concat(msgs)
   if (currentConfig.interval === 0) {
     sendLogs();
   }
-};
+}
 
 module.exports = SumoLogger;
