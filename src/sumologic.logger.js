@@ -210,16 +210,24 @@
         return;
       }
 
+      var logsToSend;
       try {
         var xmlHttp = new XMLHttpRequest();
 
-        if (this.onError) {
-          xmlHttp.addEventListener('error', this.onError);
-        }
+        logsToSend = currentLogs;
+        currentLogs = [];
+
+        var onError = this.onError;
+        xmlHttp.addEventListener('error', function() {
+          currentLogs = logsToSend;
+          if (onError) {
+            onError();
+          }
+        });
+
         if (this.onSuccess) {
           var onSuccess = this.onSuccess;
           xmlHttp.addEventListener('load', function() {
-            currentLogs = [];
             onSuccess();
           });
         }
@@ -235,8 +243,9 @@
           xmlHttp.setRequestHeader('X-Sumo-Host', this.hostName);
         }
 
-        xmlHttp.send(currentLogs.join('\n'));
+        xmlHttp.send(logsToSend.join('\n'));
       } catch (ex) {
+        currentLogs = logsToSend;
         if (this.onError) {
           this.onError();
         }
