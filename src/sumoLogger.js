@@ -57,7 +57,7 @@ function sendLogs() {
       headers: headers,
       body: currentLogs.concat('\n')
     }, function (error, response) {
-      var err = !!error || response.status < 200 || response.status >= 400;
+      var err = !!error || response.statusCode < 200 || response.statusCode >= 400;
 
       if (err && currentConfig.hasOwnProperty('onError')) {
         currentLogs = logsToSend;
