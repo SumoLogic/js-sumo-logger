@@ -55,7 +55,7 @@ function sendLogs() {
       method: 'POST',
       url: currentConfig.endpoint,
       headers: headers,
-      body: currentLogs.concat('\n')
+      body: logsToSend.concat('\n')
     }, function (error, response) {
       var err = !!error || response.statusCode < 200 || response.statusCode >= 400;
 
