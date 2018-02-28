@@ -78,6 +78,8 @@ Use a local server to serve up the `example/example.html` file included in this 
 * `config`: (Vanilla JS lib only) Set the configuration for sending logs. Options are listed in the next section. In the Node.js module, configuration options are sent when instantiating the object.
 * `log`: Set a log to be sent.
 * `flushLogs`: Force any pending logs to be sent immediately. This is mainly for use in a `logOut`/`window.onBeforeUnload` flow to ensure that any remaining queued messages are sent to Sumo Logic.
+* `startLogSending`: (Node version only) Start sending batched logs at the preconfigured interval
+* `stopLogSending`: (Node version only) Stop sending batched logs
 
 ### Configuration
 
