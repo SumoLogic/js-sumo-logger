@@ -2,7 +2,7 @@ var request = require('request');
 var _ = require('underscore');
 
 var DEFAULT_INTERVAL = 0;
-var SESSION_KEY = 'sumologic.logger.session';
+var NOOP = () => {};
 
 var originalOpts = {};
 var currentConfig = {};
@@ -24,9 +24,9 @@ function setConfig(opts) {
     sourceName: opts.sourceName || '',
     hostName: opts.hostName || '',
     sourceCategory: opts.sourceCategory || '',
-    session: SESSION_KEY + (opts.sessionKey ? opts.sessionKey : getUUID()),
-    onSuccess: opts.onSuccess || false,
-    onError: opts.onError || false
+    session: opts.sessionKey || getUUID(),
+    onSuccess: opts.onSuccess || NOOP,
+    onError: opts.onError || NOOP
   };
 }
 

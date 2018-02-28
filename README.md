@@ -49,7 +49,7 @@ $ npm install --save sumo-logger
 **From GitHub:**
 * Download or clone this repo.
 * Copy the files in the `src` folder into your app/website source.
-* Add `<script src="path/to/sumologic.logger.min.js"></source>` or 
+* Add `<script src="path/to/sumologic.logger.min.js"></source>` or
    `<script src="path/to/sumologic.logger.js"></source>` to your pages.
 * Add a `<script>` block with the desired log call, as explained in [Usage](#user-content-usage), to your pages.
 
@@ -83,11 +83,11 @@ Use a local server to serve up the `example/example.html` file included in this 
 
 Before sending any messages your page should set up the SumoLogger object. Of all the configurable attributes, only `endpoint` is required and all others are optional.
 
-*endpoint (Required):*
+*endpoint (Required)*
 
 To send your logs, the script must know which HTTP Source to use. Pass this value (which you can get from the Collectors page) in the `endpoint` parameter.
 
-*interval (optional):*
+*interval (optional)*
 
 A number of milliseconds. Messages will be batched and sent at the interval specified. Default value is zero, meaning messages are sent each time `log()` is called.
 
@@ -103,7 +103,7 @@ You can provide a function that is executed if an error occurs when the logs are
 
 You can provide a URL, in the Node version of this SDK only, which will be sent as the `url` field of the log line. In the vanilla JS version, the URL is detected from the browser's `window.location` value.
 
-*sendErrors (optional):*
+*sendErrors (optional, Browser version only)*
 
 Setting `sendErrors` to `true` will send all the unhandled errors to Sumo Logic with the error message, URL, line number, and column number. This attribute plays well with any other window.onerror functions that have been defined.
 
@@ -152,11 +152,11 @@ Override client URL set in the `config` call. (Node version only)
     sourceName: 'My Custom App',
     sourceCategory: 'My Source Category',
     hostName: 'My Host Name',
-    onSuccess: function() { 
-      // ... handle success .... 
+    onSuccess: function() {
+      // ... handle success ....
     },
     onError: function() {
-      // ... handle error .... 
+      // ... handle error ....
     }
   };
 ```
@@ -170,16 +170,16 @@ Override client URL set in the `config` call. (Node version only)
         clientUrl: 'http://yourDomain.com/path/to/page' // NODE version only,
         // ... any other options ...
     };
-    
+
     // Instantiate the SumoLogger
     var sumoLogger = new SumoLogger(opts);
-    
+
     // Push a message to be logged
     sumoLogger.log('event message to log', {
       sessionKey: 'your session key value',
       url: 'https://youDomain.com/actual/page/served'
     });
-    
+
     // Flush any logs, typically this line would be in your shutdown code
     sumoLogger.flushLogs();
 ```
@@ -211,12 +211,12 @@ Override client URL set in the `config` call. (Node version only)
     "referralSource": referralSource,
     "campaignId": campaignId
   });
-  
+
   // Flush any logs, typically this line would be in your shutdown code
   window.addEventListener('beforeunload', function() {
     SLLogger.flushLogs();
   });
-</script> 
+</script>
 ```
 
 *Field Extraction Rules:* [fields in Sumo Logic](https://service.sumologic.com/help/Default.htm#About_Field_Extraction.htm)
@@ -228,7 +228,7 @@ Sumo Logic is always concerned with security but in some instances we must balan
 Hitting an HTTP source endpoint from code running in a web browser exposes the endpoint URL to anyone inspecting the code or running your app with the browser console open to the network tab. There is no means to obfuscate or hide this. The risk is some malicious individual will send additional traffic to the endpoint, potentially using up your ingest or polluting your searches.
 
 If this is a concern for you, **we recommend using the Node.js version of the lib** so your endpoint URL is never exposed.
- 
+
 One method for minimizing the damage from some malicious users, should you choose to use this or other similar code in the browser, is adding an arbitrary string based on a regex to your log message and adding a processing rule to the HTTP source configuration that blocks incoming messages which lack a match for the regex.
 
 ## Tests
