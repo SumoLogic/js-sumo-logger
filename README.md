@@ -22,6 +22,7 @@ Messages are batched and sent at the configured interval; default is zero, meani
 * [Security Note](#security-note)
 * [Tests](#tests)
 * [Issues](#issues)
+* [Credits](#credits)
 * [License](#license)
 
 ## Installation
@@ -250,6 +251,10 @@ $ npm run test
 ## Issues
 
 Please file issues or feature requests on this Github repo.
+
+## Credits
+
+Thanks to [Clement Allen](https://github.com/clementallen) for his contributions to this project.
 
 ## License
 
