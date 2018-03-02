@@ -59,9 +59,11 @@ function sendLogs() {
     }, function (error, response) {
       var err = !!error || response.statusCode < 200 || response.statusCode >= 400;
 
-      if (err && currentConfig.hasOwnProperty('onError')) {
+      if (err) {
         currentLogs = logsToSend;
-        currentConfig.onError();
+        if (currentConfig.hasOwnProperty('onError')) {
+            currentConfig.onError();
+        }
       } else {
         if (currentConfig.hasOwnProperty('onSuccess')) {
           currentConfig.onSuccess();
