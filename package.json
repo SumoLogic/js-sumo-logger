@@ -6,18 +6,26 @@
   "scripts": {
     "release": "np",
     "http-server": "grunt http-server:dev &",
-    "test": "npm run http-server && open https://127.0.0.1:8282/jasminetest/TrackerSpecRunner.html"
+    "test": "nyc mocha",
+    "cover": "npm run test && nyc report --reporter=lcov",
+    "test:browser": "npm run http-server && open https://127.0.0.1:8282/jasminetest/TrackerSpecRunner.html"
   },
   "dependencies": {
-    "request": "^2.79.0",
+    "request": "^2.83.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
     "grunt": "^1.0.2",
     "grunt-contrib-jasmine": "^1.1.0",
     "grunt-contrib-uglify": "^3.3.0",
     "grunt-http-server": "^2.1.0",
-    "np": "^2.13.1"
+    "mocha": "^5.0.1",
+    "np": "^2.13.1",
+    "nyc": "^11.4.1",
+    "proxyquire": "^1.8.0",
+    "sinon": "^4.4.2",
+    "sinon-chai": "^2.14.0"
   },
   "repository": {
     "type": "git",

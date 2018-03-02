@@ -1,4 +1,6 @@
 .idea
 **/node_modules/*
 .DS_Store
-node-example/package-lock.json
+package-lock.json
+.nyc_output
+coverage

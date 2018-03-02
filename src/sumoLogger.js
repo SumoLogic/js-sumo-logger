@@ -7,6 +7,7 @@ var NOOP = () => {};
 var originalOpts = {};
 var currentConfig = {};
 var currentLogs = [];
+var interval;
 
 function getUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -59,20 +60,16 @@ function sendLogs() {
     }, function (error, response) {
       var err = !!error || response.statusCode < 200 || response.statusCode >= 400;
 
-      if (err && currentConfig.hasOwnProperty('onError')) {
+      if (err) {
         currentLogs = logsToSend;
         currentConfig.onError();
       } else {
-        if (currentConfig.hasOwnProperty('onSuccess')) {
           currentConfig.onSuccess();
-        }
       }
     });
   } catch (ex) {
     currentLogs = logsToSend;
-    if (currentConfig.hasOwnProperty('onError')) {
-      currentConfig.onError();
-    }
+    currentConfig.onError();
   }
 }
 
@@ -84,12 +81,7 @@ function SumoLogger(opts) {
 
   originalOpts = opts;
   setConfig(opts);
-
-  if (currentConfig.interval > 0) {
-    var sync = setInterval(function() {
-      sendLogs();
-    }, currentConfig.interval);
-  }
+  this.startLogSending();
 }
 
 SumoLogger.prototype.updateConfig = function (newOpts) {
@@ -100,6 +92,7 @@ SumoLogger.prototype.updateConfig = function (newOpts) {
       }
       if (newOpts.interval) {
         currentConfig.interval = newOpts.interval;
+        this.startLogSending();
       }
       if (newOpts.sourceCategory) {
         currentConfig.sourceCategory = newOpts.sourceCategory;
@@ -120,6 +113,18 @@ SumoLogger.prototype.flushLogs = function () {
   sendLogs();
 };
 
+SumoLogger.prototype.startLogSending = function() {
+    if (currentConfig.interval > 0) {
+        interval = setInterval(function() {
+            sendLogs();
+        }, currentConfig.interval);
+    }
+}
+
+SumoLogger.prototype.stopLogSending = function() {
+    clearInterval(interval);
+}
+
 SumoLogger.prototype.log = function(msg, optConfig) {
   if (!msg) {
     console.error('Sumo Logic Logger requires that you pass a value to log.');
@@ -130,7 +135,7 @@ SumoLogger.prototype.log = function(msg, optConfig) {
   var testEl = isArray ? msg[0] : msg;
   var type = typeof testEl;
 
-  if (type === 'undefined' || (type === 'string' && testEl === '')) {
+  if (type === 'undefined') {
     console.error('Sumo Logic Logger requires that you pass a value to log.');
     return;
   } else if (type === 'object') {
