@@ -1,5 +1,9 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v1.1.2
+* Add Release Notes
+* Add ESLint linting
+
 ### v1.1.1
 * Added Credits section to README
 
