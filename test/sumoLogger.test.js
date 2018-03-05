@@ -7,8 +7,8 @@ const isEmptyStub = sinon.stub();
 
 const endpoint = 'endpoint';
 const message = 'message';
-const timestamp = new Date;
-const sessionKey = 'abcd1234'
+const timestamp = new Date();
+const sessionKey = 'abcd1234';
 
 const SumoLogger = proxyquire('../src/sumoLogger', {
     request: requestStub,
@@ -229,14 +229,14 @@ describe('sumoLogger', () => {
             const logger = new SumoLogger({ endpoint });
 
             logger.updateConfig({
-               randomProperty: 'randomValue'
+                randomProperty: 'randomValue'
             });
 
             logger.log(message);
 
             expect(requestStub).to.have.been.calledWithMatch({
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 url: 'endpoint'
             });
@@ -252,7 +252,7 @@ describe('sumoLogger', () => {
 
             expect(requestStub).to.have.been.calledWithMatch({
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 url: 'endpoint'
             });
@@ -299,22 +299,26 @@ describe('sumoLogger', () => {
 
     describe('error logging', () => {
         it('no options', () => {
-            new SumoLogger();
+            const logger = new SumoLogger();
+            logger.log();
             expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires you to set an endpoint.');
         });
 
         it('no options endpoint property', () => {
-            new SumoLogger({});
+            const logger = new SumoLogger({});
+            logger.log();
             expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires you to set an endpoint.');
         });
 
         it('undefined options endpoint property', () => {
-            new SumoLogger({ endpoint: undefined });
+            const logger = new SumoLogger({ endpoint: undefined });
+            logger.log();
             expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires you to set an endpoint.');
         });
 
         it('empty options endpoint property', () => {
-            new SumoLogger({ endpoint: '' });
+            const logger = new SumoLogger({ endpoint: '' });
+            logger.log();
             expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires you to set an endpoint.');
         });
 

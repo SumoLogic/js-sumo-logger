@@ -1,0 +1,32 @@
+{
+    "extends": [
+        "airbnb"
+    ],
+    "env": {
+        "es6": true,
+        "node": true,
+        "mocha": true
+    },
+    "globals": {
+        "expect": true,
+        "sinon": true
+    },
+    "rules": {
+        "indent": [
+            2,
+            4
+        ],
+        "comma-dangle": [
+            2,
+            "never"
+        ],
+        "no-console": [
+            2,
+            {
+                "allow": [ "error" ]
+            }
+        ],
+        "no-unused-expressions": [0],
+        "strict": [0]
+    }
+}

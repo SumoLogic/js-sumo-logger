@@ -8,6 +8,7 @@
     "http-server": "grunt http-server:dev &",
     "test": "nyc mocha",
     "cover": "npm run test && nyc report --reporter=lcov",
+    "lint": "eslint src/sumoLogger.js test/**/*.js --fix",
     "test:browser": "npm run http-server && open https://127.0.0.1:8282/jasminetest/TrackerSpecRunner.html"
   },
   "dependencies": {
@@ -16,6 +17,11 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "eslint": "^4.18.2",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0",
     "grunt": "^1.0.2",
     "grunt-contrib-jasmine": "^1.1.0",
     "grunt-contrib-uglify": "^3.3.0",
@@ -23,7 +29,7 @@
     "mocha": "^5.0.1",
     "np": "^2.13.1",
     "nyc": "^11.4.1",
-    "proxyquire": "^1.8.0",
+    "proxyquire": "^2.0.0",
     "sinon": "^4.4.2",
     "sinon-chai": "^2.14.0"
   },
