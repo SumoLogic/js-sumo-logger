@@ -1,6 +1,6 @@
 {
   "name": "sumo-logger",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Sumo Logic Javascript SDK for sending logs to a HTTP Source endpoint.",
   "main": "src/sumoLogger.js",
   "scripts": {
