@@ -152,6 +152,7 @@ SumoLogger.prototype.log = (msg, optionalConfig) => {
         return;
     } else if (currentConfig.graphite && (!testEl.path || !testEl.value)) {
         console.error('Sumo Logic requires both \'path\' and \'value\' properties to be provided in the message object');
+        return;
     } else if (type === 'object') {
         if (Object.keys(message).length === 0) {
             console.error('Sumo Logic Logger requires that you pass a non-empty JSON object to log.');
