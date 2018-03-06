@@ -102,6 +102,10 @@ You can provide a function that is executed only when logs are successfully sent
 
 You can provide a function that is executed if an error occurs when the logs are sent.
 
+*graphite (optional, Node version only)*
+
+Enables graphite metrics sending.
+
 *clientUrl (optional, Node version only)*
 
 You can provide a URL, in the Node version of this SDK only, which will be sent as the `url` field of the log line. In the vanilla JS version, the URL is detected from the browser's `window.location` value.
@@ -160,31 +164,52 @@ Override client URL set in the `config` call. (Node version only)
     },
     onError: function() {
       // ... handle error ....
-    }
+    },
+    graphite: true // Enable graphite metrics
   };
 ```
 
 **Node.js:**
 
+***Logging***
 ```javascript
-    var SumoLogger = require('sumo-logger');
-    var opts = {
-        endpoint: 'your HTTP Source endpoint',
-        clientUrl: 'http://yourDomain.com/path/to/page' // NODE version only,
-        // ... any other options ...
-    };
+const SumoLogger = require('sumo-logger');
+const opts = {
+    endpoint: 'your HTTP Source endpoint',
+    clientUrl: 'http://yourDomain.com/path/to/page' // NODE version only,
+    // ... any other options ...
+};
 
-    // Instantiate the SumoLogger
-    var sumoLogger = new SumoLogger(opts);
+// Instantiate the SumoLogger
+const sumoLogger = new SumoLogger(opts);
 
-    // Push a message to be logged
-    sumoLogger.log('event message to log', {
-      sessionKey: 'your session key value',
-      url: 'https://youDomain.com/actual/page/served'
-    });
+// Push a message to be logged
+sumoLogger.log('event message to log', {
+  sessionKey: 'your session key value',
+  url: 'https://youDomain.com/actual/page/served'
+});
 
-    // Flush any logs, typically this line would be in your shutdown code
-    sumoLogger.flushLogs();
+// Flush any logs, typically this line would be in your shutdown code
+sumoLogger.flushLogs();
+```
+
+***Metrics***
+```javascript
+const SumoLogger = require('sumo-logger');
+const opts = {
+    endpoint: 'your HTTP Source endpoint',
+    graphite: true // enable graphite metrics
+    // ... any other options ...
+};
+
+// Instantiate the SumoLogger
+const sumoLogger = new SumoLogger(opts);
+
+// Push a metric
+sumoLogger.log({
+  path: 'metric.path', // metric path as a dot separated string
+  value: 100 // value of the metric
+});
 ```
 
 **Browser Apps:**
@@ -236,6 +261,20 @@ One method for minimizing the damage from some malicious users, should you choos
 
 ## Tests
 
+***Node***
+
+Tests are in the `test/` directory and can be run using the following command
+```
+$ npm run test
+```
+
+To generate a coverage report which is visible at `coverage/lcov-report/index.html`, run this command
+```
+$ npm run cover
+```
+
+***Browser***
+
 Test are in `jasminetest/sumologic-logger-spec.js` and can be run by loading `http://[your domain:port]/jasminetest/TrackerSpecRunner.html`.
 
 To run the tests, open `jasminetest/sumologic-logger-spec.js` and update the `sumoTestEndpoint` variable on line 2 with your HTTP source endpoint. You must have already run `npm install` in the root of the repo.
@@ -245,7 +284,7 @@ For example, if you use the Grunt server explained above, the tests will run at 
 For a shortcut you may use the included npm test script, which will start the Grunt server and open the testRunner page:
 
 ```
-$ npm run test
+$ npm run test:browser
 ````
 
 ## Issues
