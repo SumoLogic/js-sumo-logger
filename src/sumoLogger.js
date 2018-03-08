@@ -1,7 +1,8 @@
 'use strict';
 
 const axios = require('axios');
-const _ = require('underscore');
+const isEmpty = require('lodash.isempty');
+const assignIn = require('lodash.assignin');
 
 const DEFAULT_INTERVAL = 0;
 const NOOP = () => {};
@@ -46,18 +47,18 @@ function sendLogs() {
     try {
         const headers = {};
         if (currentConfig.graphite) {
-            _.extend(headers, { 'Content-Type': 'application/vnd.sumologic.graphite' });
+            assignIn(headers, { 'Content-Type': 'application/vnd.sumologic.graphite' });
         } else {
-            _.extend(headers, { 'Content-Type': 'application/json' });
+            assignIn(headers, { 'Content-Type': 'application/json' });
         }
         if (currentConfig.sourceName !== '') {
-            _.extend(headers, { 'X-Sumo-Name': currentConfig.sourceName });
+            assignIn(headers, { 'X-Sumo-Name': currentConfig.sourceName });
         }
         if (currentConfig.sourceCategory !== '') {
-            _.extend(headers, { 'X-Sumo-Category': currentConfig.sourceCategory });
+            assignIn(headers, { 'X-Sumo-Category': currentConfig.sourceCategory });
         }
         if (currentConfig.hostName !== '') {
-            _.extend(headers, { 'X-Sumo-Host': currentConfig.hostName });
+            assignIn(headers, { 'X-Sumo-Host': currentConfig.hostName });
         }
 
         logsToSend = currentLogs;
@@ -92,7 +93,7 @@ function SumoLogger(opts) {
 
 SumoLogger.prototype.updateConfig = (newOpts) => {
     try {
-        if (!_.isEmpty(newOpts)) {
+        if (!isEmpty(newOpts)) {
             if (newOpts.endpoint) {
                 currentConfig.endpoint = newOpts.endpoint;
             }
@@ -185,7 +186,7 @@ SumoLogger.prototype.log = (msg, optionalConfig) => {
             return `${item.path} ${item.value} ${Math.round(ts.getTime() / 1000)}`;
         }
         if (typeof item === 'string') {
-            return JSON.stringify(_.extend({
+            return JSON.stringify(assignIn({
                 msg: item,
                 sessionId: sessKey,
                 timestamp
@@ -195,7 +196,7 @@ SumoLogger.prototype.log = (msg, optionalConfig) => {
             sessionId: sessKey,
             timestamp
         };
-        return JSON.stringify(_.extend(current, client, item));
+        return JSON.stringify(assignIn(current, client, item));
     });
 
     currentLogs = currentLogs.concat(messages);

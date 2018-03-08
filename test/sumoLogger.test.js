@@ -1,8 +1,7 @@
-const underscore = require('underscore');
+const proxyquire = require('proxyquire');
 const axios = require('axios');
 
-const SumoLogger = require('../src/sumoLogger');
-
+const isEmptyStub = sinon.stub();
 const onSuccessSpy = sinon.spy();
 const onErrorSpy = sinon.spy();
 
@@ -10,6 +9,10 @@ const endpoint = 'endpoint';
 const message = 'message';
 const timestamp = new Date();
 const sessionKey = 'abcd1234';
+
+const SumoLogger = proxyquire('../src/sumoLogger', {
+    'lodash.isempty': isEmptyStub
+});
 
 const sandbox = sinon.sandbox.create();
 
@@ -20,6 +23,7 @@ describe('sumoLogger', () => {
     });
 
     afterEach(() => {
+        isEmptyStub.reset();
         onSuccessSpy.resetHistory();
         onErrorSpy.resetHistory();
         sandbox.restore();
@@ -317,7 +321,7 @@ describe('sumoLogger', () => {
         });
 
         it('should not update config if no values are not provided', () => {
-            sandbox.stub(underscore, 'isEmpty').returns(true);
+            isEmptyStub.returns(true);
             const logger = new SumoLogger({ endpoint });
 
             const body = JSON.stringify({
@@ -442,7 +446,7 @@ describe('sumoLogger', () => {
         });
 
         it('error updating config', () => {
-            sandbox.stub(underscore, 'isEmpty').throws(new Error(message));
+            isEmptyStub.throws(new Error(message));
 
             const logger = new SumoLogger({ endpoint });
 
