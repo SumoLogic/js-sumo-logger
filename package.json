@@ -12,7 +12,7 @@
     "test:browser": "npm run http-server && open https://127.0.0.1:8282/jasminetest/TrackerSpecRunner.html"
   },
   "dependencies": {
-    "request": "^2.83.0",
+    "axios": "^0.18.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {

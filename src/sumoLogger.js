@@ -1,6 +1,6 @@
 'use strict';
 
-const request = require('request');
+const axios = require('axios');
 const _ = require('underscore');
 
 const DEFAULT_INTERVAL = 0;
@@ -63,24 +63,20 @@ function sendLogs() {
         logsToSend = currentLogs;
         currentLogs = [];
 
-        request({
-            method: 'POST',
-            url: currentConfig.endpoint,
-            headers,
-            body: logsToSend.join('\n')
-        }, (error, response) => {
-            const err = !!error || response.statusCode < 200 || response.statusCode >= 400;
-
-            if (err) {
-                currentLogs = logsToSend;
-                currentConfig.onError();
-            } else {
-                currentConfig.onSuccess();
-            }
+        axios.post(
+            currentConfig.endpoint,
+            logsToSend.join('\n'),
+            { headers }
+        ).then(() => {
+            logsToSend = [];
+            currentConfig.onSuccess();
+        }).catch((error) => {
+            currentConfig.onError(error.message);
+            currentLogs = logsToSend;
         });
     } catch (ex) {
         currentLogs = logsToSend;
-        currentConfig.onError();
+        currentConfig.onError(ex.message);
     }
 }
 
