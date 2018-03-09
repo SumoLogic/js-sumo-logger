@@ -1,9 +1,9 @@
 const proxyquire = require('proxyquire');
+const axios = require('axios');
 
-const requestStub = sinon.stub();
+const isEmptyStub = sinon.stub();
 const onSuccessSpy = sinon.spy();
 const onErrorSpy = sinon.spy();
-const isEmptyStub = sinon.stub();
 
 const endpoint = 'endpoint';
 const message = 'message';
@@ -11,22 +11,22 @@ const timestamp = new Date();
 const sessionKey = 'abcd1234';
 
 const SumoLogger = proxyquire('../src/sumoLogger', {
-    request: requestStub,
-    underscore: {
-        isEmpty: isEmptyStub
-    }
+    'lodash.isempty': isEmptyStub
 });
+
+const sandbox = sinon.sandbox.create();
 
 describe('sumoLogger', () => {
     beforeEach(() => {
-        sinon.stub(console, 'error');
+        sandbox.stub(axios, 'post');
+        sandbox.spy(console, 'error');
     });
 
     afterEach(() => {
-        requestStub.reset();
+        isEmptyStub.reset();
         onSuccessSpy.resetHistory();
         onErrorSpy.resetHistory();
-        console.error.restore();
+        sandbox.restore();
     });
 
     describe('log()', () => {
@@ -45,14 +45,15 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(requestStub).to.have.been.calledWithMatch({
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                method: 'POST',
-                url: 'endpoint',
-                body
-            });
+            expect(axios.post).to.have.been.calledWithExactly(
+                endpoint,
+                body,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
         });
 
         it('should send a message object', () => {
@@ -71,14 +72,15 @@ describe('sumoLogger', () => {
                 key: 'value'
             });
 
-            expect(requestStub).to.have.been.calledWithMatch({
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                method: 'POST',
-                url: 'endpoint',
-                body
-            });
+            expect(axios.post).to.have.been.calledWithMatch(
+                endpoint,
+                body,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
         });
 
         it('should send a message array', () => {
@@ -96,14 +98,15 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(requestStub).to.have.been.calledWithMatch({
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                method: 'POST',
-                url: 'endpoint',
-                body
-            });
+            expect(axios.post).to.have.been.calledWithMatch(
+                endpoint,
+                body,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
         });
 
         it('should extend headers if they exist in the config', () => {
@@ -118,16 +121,30 @@ describe('sumoLogger', () => {
                 hostName
             });
 
-            logger.log(message);
-
-            expect(requestStub).to.have.been.calledWithMatch({
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Sumo-Name': sourceName,
-                    'X-Sumo-Category': sourceCategory,
-                    'X-Sumo-Host': hostName
-                }
+            const body = JSON.stringify({
+                msg: message,
+                sessionId: sessionKey,
+                timestamp: timestamp.toUTCString(),
+                url: ''
             });
+
+            logger.log(message, {
+                timestamp,
+                sessionKey
+            });
+
+            expect(axios.post).to.have.been.calledWithMatch(
+                endpoint,
+                body,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Sumo-Name': sourceName,
+                        'X-Sumo-Category': sourceCategory,
+                        'X-Sumo-Host': hostName
+                    }
+                }
+            );
         });
 
         it('should set the graphite header if graphite enabled', () => {
@@ -136,16 +153,26 @@ describe('sumoLogger', () => {
                 graphite: true
             });
 
-            logger.log({
-                path: 'graphite.metric.path',
-                value: 100
-            });
-
-            expect(requestStub).to.have.been.calledWithMatch({
-                headers: {
-                    'Content-Type': 'application/vnd.sumologic.graphite'
+            logger.log(
+                {
+                    path: 'graphite.metric.path',
+                    value: 100
+                },
+                {
+                    timestamp,
+                    sessionKey
                 }
-            });
+            );
+
+            expect(axios.post).to.have.been.calledWithMatch(
+                endpoint,
+                `graphite.metric.path 100 ${Math.round(timestamp.getTime() / 1000)}`,
+                {
+                    headers: {
+                        'Content-Type': 'application/vnd.sumologic.graphite'
+                    }
+                }
+            );
         });
 
         it('should send correctly formated graphite metrics if graphite enabled', () => {
@@ -160,9 +187,10 @@ describe('sumoLogger', () => {
                 value: 100
             }, { timestamp });
 
-            expect(requestStub).to.have.been.calledWithMatch({
-                body: `graphite.metric.path 100 ${expectedTimestamp}`
-            });
+            expect(axios.post).to.have.been.calledWithMatch(
+                endpoint,
+                `graphite.metric.path 100 ${expectedTimestamp}`
+            );
         });
 
         it('should send correctly formatted graphite metrics in batch', () => {
@@ -188,30 +216,14 @@ describe('sumoLogger', () => {
                 }
             );
 
-            expect(requestStub).to.have.been.calledWithMatch({
-                body: `graphite.metric.path 100 ${expectedTimestamp}\nanother.graphite.metric.path 50 ${expectedTimestamp}`
-            });
-        });
-
-        it('should not send request straight away if interval set', (done) => {
-            const logger = new SumoLogger({
+            expect(axios.post).to.have.been.calledWithMatch(
                 endpoint,
-                interval: 10
-            });
-
-            logger.log(message);
-
-            expect(requestStub).to.not.have.been.called;
-
-            setTimeout(() => {
-                logger.stopLogSending();
-                expect(requestStub).to.have.been.calledOnce;
-                done();
-            }, 20);
+                `graphite.metric.path 100 ${expectedTimestamp}\nanother.graphite.metric.path 50 ${expectedTimestamp}`
+            );
         });
 
-        it('should call the onSuccess callback if the request succeeds', () => {
-            requestStub.yields(null, { statusCode: 200 });
+        it('should call the onSuccess callback if the request succeeds', (done) => {
+            axios.post.resolves({ status: 200 });
 
             const logger = new SumoLogger({
                 endpoint,
@@ -220,11 +232,14 @@ describe('sumoLogger', () => {
 
             logger.log(message);
 
-            expect(onSuccessSpy).to.have.been.calledOnce;
+            setTimeout(() => {
+                expect(onSuccessSpy).to.have.been.calledOnce;
+                done();
+            }, 10);
         });
 
-        it('should call the onError callback if an error object is returned', () => {
-            requestStub.yields(new Error('unavailable'), {});
+        it('should call the onError callback if an error object is returned', (done) => {
+            axios.post.rejects(new Error('unavailable'));
 
             const logger = new SumoLogger({
                 endpoint,
@@ -233,33 +248,10 @@ describe('sumoLogger', () => {
 
             logger.log(message);
 
-            expect(onErrorSpy).to.have.been.calledOnce;
-        });
-
-        it('should call the onError callback if the statusCode is less than 200', () => {
-            requestStub.yields(null, { statusCode: 100 });
-
-            const logger = new SumoLogger({
-                endpoint,
-                onError: onErrorSpy
-            });
-
-            logger.log(message);
-
-            expect(onErrorSpy).to.have.been.calledOnce;
-        });
-
-        it('should call the onError callback if the statusCode is greater than 400', () => {
-            requestStub.yields(null, { statusCode: 404 });
-
-            const logger = new SumoLogger({
-                endpoint,
-                onError: onErrorSpy
-            });
-
-            logger.log(message);
-
-            expect(onErrorSpy).to.have.been.calledOnce;
+            setTimeout(() => {
+                expect(onErrorSpy).to.have.been.calledWith('unavailable');
+                done();
+            }, 10);
         });
     });
 
@@ -267,22 +259,35 @@ describe('sumoLogger', () => {
         it('should update the instance config with the new values', (done) => {
             const logger = new SumoLogger({ endpoint });
 
+            const body = JSON.stringify({
+                msg: message,
+                sessionId: sessionKey,
+                timestamp: timestamp.toUTCString(),
+                url: ''
+            });
+
             logger.updateConfig({
                 endpoint: 'newendpoint',
                 sourceCategory: 'newSourceCategory',
                 interval: 10
             });
 
-            logger.log(message);
+            logger.log(message, {
+                timestamp,
+                sessionKey
+            });
 
             setTimeout(() => {
-                expect(requestStub).to.have.been.calledWithMatch({
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Sumo-Category': 'newSourceCategory'
-                    },
-                    url: 'newendpoint'
-                });
+                expect(axios.post).to.have.been.calledWithMatch(
+                    'newendpoint',
+                    body,
+                    {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Sumo-Category': 'newSourceCategory'
+                        }
+                    }
+                );
                 logger.stopLogSending();
                 done();
             }, 20);
@@ -291,34 +296,57 @@ describe('sumoLogger', () => {
         it('should not update config if allowed values are not provided', () => {
             const logger = new SumoLogger({ endpoint });
 
+            const body = JSON.stringify({
+                msg: message,
+                sessionId: sessionKey,
+                timestamp: timestamp.toUTCString(),
+                url: ''
+            });
+
             logger.updateConfig({
                 randomProperty: 'randomValue'
             });
 
             logger.log(message);
 
-            expect(requestStub).to.have.been.calledWithMatch({
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                url: 'endpoint'
-            });
+            expect(axios.post).to.have.been.calledWithMatch(
+                endpoint,
+                body,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
         });
 
         it('should not update config if no values are not provided', () => {
             isEmptyStub.returns(true);
             const logger = new SumoLogger({ endpoint });
 
+            const body = JSON.stringify({
+                msg: message,
+                sessionId: sessionKey,
+                timestamp: timestamp.toUTCString(),
+                url: ''
+            });
+
             logger.updateConfig({});
 
-            logger.log(message);
-
-            expect(requestStub).to.have.been.calledWithMatch({
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                url: 'endpoint'
+            logger.log(message, {
+                timestamp,
+                sessionKey
             });
+
+            expect(axios.post).to.have.been.calledWithMatch(
+                endpoint,
+                body,
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
         });
     });
 
@@ -329,13 +357,16 @@ describe('sumoLogger', () => {
                 interval: 10
             });
 
-            logger.log(message);
+            logger.log(message, {
+                timestamp,
+                sessionKey
+            });
 
             logger.emptyLogQueue();
 
             setTimeout(() => {
                 logger.stopLogSending();
-                expect(requestStub).to.not.have.been.called;
+                expect(axios.post).to.not.have.been.called;
                 done();
             }, 20);
         });
@@ -350,11 +381,11 @@ describe('sumoLogger', () => {
 
             logger.log(message);
 
-            expect(requestStub).to.not.have.been.called;
+            expect(axios.post).to.not.have.been.called;
 
             logger.flushLogs();
 
-            expect(requestStub).to.have.been.calledOnce;
+            expect(axios.post).to.have.been.calledOnce;
 
             logger.stopLogSending();
         });
@@ -412,19 +443,6 @@ describe('sumoLogger', () => {
                 incorrect: 'value'
             });
             expect(console.error).to.have.been.calledWith('Sumo Logic requires both \'path\' and \'value\' properties to be provided in the message object');
-        });
-
-        it('catch error sending request', () => {
-            requestStub.throws(new Error(message));
-
-            const logger = new SumoLogger({
-                endpoint,
-                onError: onErrorSpy
-            });
-
-            logger.log(message);
-
-            expect(onErrorSpy).to.have.been.calledOnce;
         });
 
         it('error updating config', () => {

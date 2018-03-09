@@ -1,7 +1,8 @@
 'use strict';
 
-const request = require('request');
-const _ = require('underscore');
+const axios = require('axios');
+const isEmpty = require('lodash.isempty');
+const assignIn = require('lodash.assignin');
 
 const DEFAULT_INTERVAL = 0;
 const NOOP = () => {};
@@ -46,41 +47,37 @@ function sendLogs() {
     try {
         const headers = {};
         if (currentConfig.graphite) {
-            _.extend(headers, { 'Content-Type': 'application/vnd.sumologic.graphite' });
+            assignIn(headers, { 'Content-Type': 'application/vnd.sumologic.graphite' });
         } else {
-            _.extend(headers, { 'Content-Type': 'application/json' });
+            assignIn(headers, { 'Content-Type': 'application/json' });
         }
         if (currentConfig.sourceName !== '') {
-            _.extend(headers, { 'X-Sumo-Name': currentConfig.sourceName });
+            assignIn(headers, { 'X-Sumo-Name': currentConfig.sourceName });
         }
         if (currentConfig.sourceCategory !== '') {
-            _.extend(headers, { 'X-Sumo-Category': currentConfig.sourceCategory });
+            assignIn(headers, { 'X-Sumo-Category': currentConfig.sourceCategory });
         }
         if (currentConfig.hostName !== '') {
-            _.extend(headers, { 'X-Sumo-Host': currentConfig.hostName });
+            assignIn(headers, { 'X-Sumo-Host': currentConfig.hostName });
         }
 
         logsToSend = currentLogs;
         currentLogs = [];
 
-        request({
-            method: 'POST',
-            url: currentConfig.endpoint,
-            headers,
-            body: logsToSend.join('\n')
-        }, (error, response) => {
-            const err = !!error || response.statusCode < 200 || response.statusCode >= 400;
-
-            if (err) {
-                currentLogs = logsToSend;
-                currentConfig.onError();
-            } else {
-                currentConfig.onSuccess();
-            }
+        axios.post(
+            currentConfig.endpoint,
+            logsToSend.join('\n'),
+            { headers }
+        ).then(() => {
+            logsToSend = [];
+            currentConfig.onSuccess();
+        }).catch((error) => {
+            currentConfig.onError(error.message);
+            currentLogs = logsToSend;
         });
     } catch (ex) {
         currentLogs = logsToSend;
-        currentConfig.onError();
+        currentConfig.onError(ex.message);
     }
 }
 
@@ -96,7 +93,7 @@ function SumoLogger(opts) {
 
 SumoLogger.prototype.updateConfig = (newOpts) => {
     try {
-        if (!_.isEmpty(newOpts)) {
+        if (!isEmpty(newOpts)) {
             if (newOpts.endpoint) {
                 currentConfig.endpoint = newOpts.endpoint;
             }
@@ -189,7 +186,7 @@ SumoLogger.prototype.log = (msg, optionalConfig) => {
             return `${item.path} ${item.value} ${Math.round(ts.getTime() / 1000)}`;
         }
         if (typeof item === 'string') {
-            return JSON.stringify(_.extend({
+            return JSON.stringify(assignIn({
                 msg: item,
                 sessionId: sessKey,
                 timestamp
@@ -199,7 +196,7 @@ SumoLogger.prototype.log = (msg, optionalConfig) => {
             sessionId: sessKey,
             timestamp
         };
-        return JSON.stringify(_.extend(current, client, item));
+        return JSON.stringify(assignIn(current, client, item));
     });
 
     currentLogs = currentLogs.concat(messages);
