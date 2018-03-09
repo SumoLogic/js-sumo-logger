@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v1.2.1
+* Replace request lib with axios and underscore with lodash. Reduces bundled size from 314kb to 8kb! Thanks [Clement](https://github.com/clementallen).
+
 ### v1.2.0
 * Adds support for sending Graphite logs
 
