@@ -31,7 +31,8 @@ function setConfig(config) {
         sourceCategory: config.sourceCategory || '',
         session: config.sessionKey || getUUID(),
         onSuccess: config.onSuccess || NOOP,
-        onError: config.onError || NOOP
+        onError: config.onError || NOOP,
+        graphite: config.graphite || false
     };
 }
 
@@ -43,7 +44,12 @@ function sendLogs() {
     let logsToSend;
 
     try {
-        const headers = { 'Content-Type': 'application/json' };
+        const headers = {};
+        if (currentConfig.graphite) {
+            _.extend(headers, { 'Content-Type': 'application/vnd.sumologic.graphite' });
+        } else {
+            _.extend(headers, { 'Content-Type': 'application/json' });
+        }
         if (currentConfig.sourceName !== '') {
             _.extend(headers, { 'X-Sumo-Name': currentConfig.sourceName });
         }
@@ -144,6 +150,9 @@ SumoLogger.prototype.log = (msg, optionalConfig) => {
     if (type === 'undefined') {
         console.error('Sumo Logic Logger requires that you pass a value to log.');
         return;
+    } else if (currentConfig.graphite && (!testEl.path || !testEl.value)) {
+        console.error('Sumo Logic requires both \'path\' and \'value\' properties to be provided in the message object');
+        return;
     } else if (type === 'object') {
         if (Object.keys(message).length === 0) {
             console.error('Sumo Logic Logger requires that you pass a non-empty JSON object to log.');
@@ -176,6 +185,9 @@ SumoLogger.prototype.log = (msg, optionalConfig) => {
     const timestamp = ts.toUTCString();
 
     const messages = message.map((item) => {
+        if (currentConfig.graphite) {
+            return `${item.path} ${item.value} ${Math.round(ts.getTime() / 1000)}`;
+        }
         if (typeof item === 'string') {
             return JSON.stringify(_.extend({
                 msg: item,

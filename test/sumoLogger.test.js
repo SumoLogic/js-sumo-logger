@@ -130,6 +130,69 @@ describe('sumoLogger', () => {
             });
         });
 
+        it('should set the graphite header if graphite enabled', () => {
+            const logger = new SumoLogger({
+                endpoint,
+                graphite: true
+            });
+
+            logger.log({
+                path: 'graphite.metric.path',
+                value: 100
+            });
+
+            expect(requestStub).to.have.been.calledWithMatch({
+                headers: {
+                    'Content-Type': 'application/vnd.sumologic.graphite'
+                }
+            });
+        });
+
+        it('should send correctly formated graphite metrics if graphite enabled', () => {
+            const logger = new SumoLogger({
+                endpoint,
+                graphite: true
+            });
+            const expectedTimestamp = Math.round(timestamp / 1000);
+
+            logger.log({
+                path: 'graphite.metric.path',
+                value: 100
+            }, { timestamp });
+
+            expect(requestStub).to.have.been.calledWithMatch({
+                body: `graphite.metric.path 100 ${expectedTimestamp}`
+            });
+        });
+
+        it('should send correctly formatted graphite metrics in batch', () => {
+            const logger = new SumoLogger({
+                endpoint,
+                graphite: true
+            });
+            const expectedTimestamp = Math.round(timestamp / 1000);
+
+            logger.log(
+                [
+                    {
+                        path: 'graphite.metric.path',
+                        value: 100
+                    },
+                    {
+                        path: 'another.graphite.metric.path',
+                        value: 50
+                    }
+                ],
+                {
+                    timestamp
+                }
+            );
+
+            expect(requestStub).to.have.been.calledWithMatch({
+                body: `graphite.metric.path 100 ${expectedTimestamp}\nanother.graphite.metric.path 50 ${expectedTimestamp}`
+            });
+        });
+
         it('should not send request straight away if interval set', (done) => {
             const logger = new SumoLogger({
                 endpoint,
@@ -338,6 +401,17 @@ describe('sumoLogger', () => {
             const logger = new SumoLogger({ endpoint });
             logger.log({});
             expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires that you pass a non-empty JSON object to log.');
+        });
+
+        it('required graphite message properties not provided', () => {
+            const logger = new SumoLogger({
+                endpoint,
+                graphite: true
+            });
+            logger.log({
+                incorrect: 'value'
+            });
+            expect(console.error).to.have.been.calledWith('Sumo Logic requires both \'path\' and \'value\' properties to be provided in the message object');
         });
 
         it('catch error sending request', () => {
