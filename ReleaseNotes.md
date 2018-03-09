@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v1.2.0
+* Adds support for sending Graphite logs
+
 ### v1.1.2
 * Add Release Notes
 * Add ESLint linting
