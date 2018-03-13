@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v1.3
+* Adds Babel pre-publish step so clients using SumoLogger use the es5 version by default, allowing for easier use with webpack and older Node versions
+
 ### v1.2.1
 * Replace request lib with axios and underscore with lodash. Reduces bundled size from 314kb to 8kb! Thanks [Clement](https://github.com/clementallen).
 
