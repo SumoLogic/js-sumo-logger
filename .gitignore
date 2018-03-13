@@ -3,4 +3,5 @@
 .DS_Store
 package-lock.json
 .nyc_output
-coverage
+coverage/
+lib/
