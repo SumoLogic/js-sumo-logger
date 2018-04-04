@@ -3,6 +3,7 @@
   "version": "1.3.0",
   "description": "Sumo Logic Javascript SDK for sending logs to a HTTP Source endpoint.",
   "main": "lib/sumoLogger.js",
+  "browser": "lib/sumologic.logger.min.js",
   "scripts": {
     "release": "np",
     "http-server": "grunt http-server:dev &",
