@@ -307,7 +307,10 @@ describe('sumoLogger', () => {
                 randomProperty: 'randomValue'
             });
 
-            logger.log(message);
+            logger.log(message, {
+                timestamp,
+                sessionKey
+            });
 
             expect(axios.post).to.have.been.calledWithMatch(
                 endpoint,

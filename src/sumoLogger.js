@@ -25,41 +25,41 @@ class SumoLogger {
             return;
         }
 
-        this.currentConfig = {};
-        this.currentLogs = [];
+        this.config = {};
+        this.pendingLogs = [];
         this.interval = 0;
 
         this.setConfig(options);
         this.startLogSending();
     }
 
-    setConfig(config) {
-        this.currentConfig = {
-            endpoint: config.endpoint,
-            clientUrl: config.clientUrl || '',
-            interval: config.interval || DEFAULT_INTERVAL,
-            sourceName: config.sourceName || '',
-            hostName: config.hostName || '',
-            sourceCategory: config.sourceCategory || '',
-            session: config.sessionKey || getUUID(),
-            onSuccess: config.onSuccess || NOOP,
-            onError: config.onError || NOOP,
-            graphite: config.graphite || false
+    setConfig(newConfig) {
+        this.config = {
+            endpoint: newConfig.endpoint,
+            clientUrl: newConfig.clientUrl || '',
+            interval: newConfig.interval || DEFAULT_INTERVAL,
+            sourceName: newConfig.sourceName || '',
+            hostName: newConfig.hostName || '',
+            sourceCategory: newConfig.sourceCategory || '',
+            session: newConfig.sessionKey || getUUID(),
+            onSuccess: newConfig.onSuccess || NOOP,
+            onError: newConfig.onError || NOOP,
+            graphite: newConfig.graphite || false
         };
     }
 
-    updateConfig(newOptions) {
+    updateConfig(newConfig) {
         try {
-            if (!isEmpty(newOptions)) {
-                if (newOptions.endpoint) {
-                    this.currentConfig.endpoint = newOptions.endpoint;
+            if (!isEmpty(newConfig)) {
+                if (newConfig.endpoint) {
+                    this.config.endpoint = newConfig.endpoint;
                 }
-                if (newOptions.interval) {
-                    this.currentConfig.interval = newOptions.interval;
+                if (newConfig.interval) {
+                    this.config.interval = newConfig.interval;
                     this.startLogSending();
                 }
-                if (newOptions.sourceCategory) {
-                    this.currentConfig.sourceCategory = newOptions.sourceCategory;
+                if (newConfig.sourceCategory) {
+                    this.config.sourceCategory = newConfig.sourceCategory;
                 }
             }
         } catch (ex) {
@@ -70,7 +70,7 @@ class SumoLogger {
     }
 
     sendLogs() {
-        if (this.currentLogs.length === 0) {
+        if (this.pendingLogs.length === 0) {
             return;
         }
 
@@ -78,46 +78,46 @@ class SumoLogger {
 
         try {
             const headers = {};
-            if (this.currentConfig.graphite) {
+            if (this.config.graphite) {
                 assignIn(headers, { 'Content-Type': 'application/vnd.sumologic.graphite' });
             } else {
                 assignIn(headers, { 'Content-Type': 'application/json' });
             }
-            if (this.currentConfig.sourceName !== '') {
-                assignIn(headers, { 'X-Sumo-Name': this.currentConfig.sourceName });
+            if (this.config.sourceName !== '') {
+                assignIn(headers, { 'X-Sumo-Name': this.config.sourceName });
             }
-            if (this.currentConfig.sourceCategory !== '') {
-                assignIn(headers, { 'X-Sumo-Category': this.currentConfig.sourceCategory });
+            if (this.config.sourceCategory !== '') {
+                assignIn(headers, { 'X-Sumo-Category': this.config.sourceCategory });
             }
-            if (this.currentConfig.hostName !== '') {
-                assignIn(headers, { 'X-Sumo-Host': this.currentConfig.hostName });
+            if (this.config.hostName !== '') {
+                assignIn(headers, { 'X-Sumo-Host': this.config.hostName });
             }
 
-            logsToSend = this.currentLogs;
-            this.currentLogs = [];
+            logsToSend = this.pendingLogs;
+            this.pendingLogs = [];
 
             axios.post(
-                this.currentConfig.endpoint,
+                this.config.endpoint,
                 logsToSend.join('\n'),
                 { headers }
             ).then(() => {
                 logsToSend = [];
-                this.currentConfig.onSuccess();
+                this.config.onSuccess();
             }).catch((error) => {
-                this.currentConfig.onError(error.message);
-                this.currentLogs = logsToSend;
+                this.config.onError(error.message);
+                this.pendingLogs = logsToSend;
             });
         } catch (ex) {
-            this.currentLogs = logsToSend;
-            this.currentConfig.onError(ex.message);
+            this.pendingLogs = logsToSend;
+            this.config.onError(ex.message);
         }
     }
 
     startLogSending() {
-        if (this.currentConfig.interval > 0) {
+        if (this.config.interval > 0) {
             this.interval = setInterval(() => {
                 this.sendLogs();
-            }, this.currentConfig.interval);
+            }, this.config.interval);
         }
     }
 
@@ -126,7 +126,7 @@ class SumoLogger {
     }
 
     emptyLogQueue() {
-        this.currentLogs = [];
+        this.pendingLogs = [];
     }
 
     flushLogs() {
@@ -148,7 +148,7 @@ class SumoLogger {
         if (type === 'undefined') {
             console.error('Sumo Logic Logger requires that you pass a value to log.');
             return;
-        } else if (this.currentConfig.graphite && (!testEl.path || !testEl.value)) {
+        } else if (this.config.graphite && (!testEl.path || !testEl.value)) {
             console.error('Sumo Logic requires both \'path\' and \'value\' properties to be provided in the message object');
             return;
         } else if (type === 'object') {
@@ -163,8 +163,8 @@ class SumoLogger {
         }
 
         let ts = new Date();
-        let sessKey = this.currentConfig.session;
-        const client = { url: this.currentConfig.clientUrl };
+        let sessKey = this.config.session;
+        const client = { url: this.config.clientUrl };
 
         if (optionalConfig) {
             if (Object.prototype.hasOwnProperty.call(optionalConfig, 'sessionKey')) {
@@ -183,7 +183,7 @@ class SumoLogger {
         const timestamp = ts.toUTCString();
 
         const messages = message.map((item) => {
-            if (this.currentConfig.graphite) {
+            if (this.config.graphite) {
                 return `${item.path} ${item.value} ${Math.round(ts.getTime() / 1000)}`;
             }
             if (typeof item === 'string') {
@@ -200,9 +200,9 @@ class SumoLogger {
             return JSON.stringify(assignIn(current, client, item));
         });
 
-        this.currentLogs = this.currentLogs.concat(messages);
+        this.pendingLogs = this.pendingLogs.concat(messages);
 
-        if (this.currentConfig.interval === 0) {
+        if (this.config.interval === 0) {
             this.sendLogs();
         }
     }
