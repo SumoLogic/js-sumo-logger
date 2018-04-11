@@ -1,7 +1,6 @@
 'use strict';
 
 const axios = require('axios');
-const isEmpty = require('lodash.isempty');
 const assignIn = require('lodash.assignin');
 
 const DEFAULT_INTERVAL = 0;
@@ -48,25 +47,17 @@ class SumoLogger {
         };
     }
 
-    updateConfig(newConfig) {
-        try {
-            if (!isEmpty(newConfig)) {
-                if (newConfig.endpoint) {
-                    this.config.endpoint = newConfig.endpoint;
-                }
-                if (newConfig.interval) {
-                    this.config.interval = newConfig.interval;
-                    this.startLogSending();
-                }
-                if (newConfig.sourceCategory) {
-                    this.config.sourceCategory = newConfig.sourceCategory;
-                }
-            }
-        } catch (ex) {
-            console.error('Could not update Sumo Logic config');
-            return false;
+    updateConfig(newConfig = {}) {
+        if (newConfig.endpoint) {
+            this.config.endpoint = newConfig.endpoint;
         }
-        return true;
+        if (newConfig.interval) {
+            this.config.interval = newConfig.interval;
+            this.startLogSending();
+        }
+        if (newConfig.sourceCategory) {
+            this.config.sourceCategory = newConfig.sourceCategory;
+        }
     }
 
     sendLogs() {

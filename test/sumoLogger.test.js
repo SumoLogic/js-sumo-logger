@@ -1,7 +1,6 @@
-const proxyquire = require('proxyquire');
+const SumoLogger = require('../src/sumoLogger');
 const axios = require('axios');
 
-const isEmptyStub = sinon.stub();
 const onSuccessSpy = sinon.spy();
 const onErrorSpy = sinon.spy();
 
@@ -9,10 +8,6 @@ const endpoint = 'endpoint';
 const message = 'message';
 const timestamp = new Date();
 const sessionKey = 'abcd1234';
-
-const SumoLogger = proxyquire('../src/sumoLogger', {
-    'lodash.isempty': isEmptyStub
-});
 
 const sandbox = sinon.sandbox.create();
 
@@ -23,7 +18,6 @@ describe('sumoLogger', () => {
     });
 
     afterEach(() => {
-        isEmptyStub.reset();
         onSuccessSpy.resetHistory();
         onErrorSpy.resetHistory();
         sandbox.restore();
@@ -324,7 +318,6 @@ describe('sumoLogger', () => {
         });
 
         it('should not update config if no values are not provided', () => {
-            isEmptyStub.returns(true);
             const logger = new SumoLogger({ endpoint });
 
             const body = JSON.stringify({
@@ -446,16 +439,6 @@ describe('sumoLogger', () => {
                 incorrect: 'value'
             });
             expect(console.error).to.have.been.calledWith('Sumo Logic requires both \'path\' and \'value\' properties to be provided in the message object');
-        });
-
-        it('error updating config', () => {
-            isEmptyStub.throws(new Error(message));
-
-            const logger = new SumoLogger({ endpoint });
-
-            logger.updateConfig({});
-
-            expect(console.error).to.have.been.calledWith('Could not update Sumo Logic config');
         });
     });
 });
