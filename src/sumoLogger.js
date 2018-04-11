@@ -18,7 +18,7 @@ function getUUID() {
 class SumoLogger {
     constructor(options) {
         if (!options || !Object.prototype.hasOwnProperty.call(options, 'endpoint') || options.endpoint === undefined || options.endpoint === '') {
-            console.error('Sumo Logic Logger requires you to set an endpoint.');
+            console.error('An endpoint value must be provided');
             return;
         }
 
@@ -126,7 +126,7 @@ class SumoLogger {
         let message = msg;
 
         if (!message) {
-            console.error('Sumo Logic Logger requires that you pass a value to log.');
+            console.error('A value must be provided');
             return;
         }
 
@@ -135,14 +135,14 @@ class SumoLogger {
         const type = typeof testEl;
 
         if (type === 'undefined') {
-            console.error('Sumo Logic Logger requires that you pass a value to log.');
+            console.error('A value must be provided');
             return;
         } else if (this.config.graphite && (!testEl.path || !testEl.value)) {
-            console.error('Sumo Logic requires both \'path\' and \'value\' properties to be provided in the message object');
+            console.error('Both \'path\' and \'value\' properties must be provided in the message object to send Graphite metrics');
             return;
         } else if (type === 'object') {
             if (Object.keys(message).length === 0) {
-                console.error('Sumo Logic Logger requires that you pass a non-empty JSON object to log.');
+                console.error('A non-empty JSON object must be provided');
                 return;
             }
         }

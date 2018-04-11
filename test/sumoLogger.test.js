@@ -391,43 +391,43 @@ describe('sumoLogger', () => {
         it('no options', () => {
             const logger = new SumoLogger();
             logger.log();
-            expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires you to set an endpoint.');
+            expect(console.error).to.have.been.calledWith('An endpoint value must be provided');
         });
 
         it('no options endpoint property', () => {
             const logger = new SumoLogger({});
             logger.log();
-            expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires you to set an endpoint.');
+            expect(console.error).to.have.been.calledWith('An endpoint value must be provided');
         });
 
         it('undefined options endpoint property', () => {
             const logger = new SumoLogger({ endpoint: undefined });
             logger.log();
-            expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires you to set an endpoint.');
+            expect(console.error).to.have.been.calledWith('An endpoint value must be provided');
         });
 
         it('empty options endpoint property', () => {
             const logger = new SumoLogger({ endpoint: '' });
             logger.log();
-            expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires you to set an endpoint.');
+            expect(console.error).to.have.been.calledWith('An endpoint value must be provided');
         });
 
         it('no message passed to log', () => {
             const logger = new SumoLogger({ endpoint });
             logger.log();
-            expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires that you pass a value to log.');
+            expect(console.error).to.have.been.calledWith('A value must be provided');
         });
 
         it('empty message array passed to log', () => {
             const logger = new SumoLogger({ endpoint });
             logger.log([]);
-            expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires that you pass a value to log.');
+            expect(console.error).to.have.been.calledWith('A value must be provided');
         });
 
         it('empty message object passed to log', () => {
             const logger = new SumoLogger({ endpoint });
             logger.log({});
-            expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires that you pass a non-empty JSON object to log.');
+            expect(console.error).to.have.been.calledWith('A non-empty JSON object must be provided');
         });
 
         it('required graphite message properties not provided', () => {
@@ -438,7 +438,7 @@ describe('sumoLogger', () => {
             logger.log({
                 incorrect: 'value'
             });
-            expect(console.error).to.have.been.calledWith('Sumo Logic requires both \'path\' and \'value\' properties to be provided in the message object');
+            expect(console.error).to.have.been.calledWith('Both \'path\' and \'value\' properties must be provided in the message object to send Graphite metrics');
         });
     });
 });
