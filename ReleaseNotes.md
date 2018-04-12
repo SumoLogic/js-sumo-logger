@@ -1,6 +1,11 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
-### v1.3
+### v1.4.0
+* Moves Node library to expose a class to help support multiple instances of SumoLogger.
+* Cleans up much conditional code, e.g., in configuration setting and checking.
+* Only supports active Node versions (stable, lts, 6)
+
+### v1.3.0
 * Adds Babel pre-publish step so clients using SumoLogger use the es5 version by default, allowing for easier use with webpack and older Node versions
 
 ### v1.2.1
