@@ -1,7 +1,6 @@
-const proxyquire = require('proxyquire');
+const SumoLogger = require('../src/sumoLogger');
 const axios = require('axios');
 
-const isEmptyStub = sinon.stub();
 const onSuccessSpy = sinon.spy();
 const onErrorSpy = sinon.spy();
 
@@ -9,10 +8,6 @@ const endpoint = 'endpoint';
 const message = 'message';
 const timestamp = new Date();
 const sessionKey = 'abcd1234';
-
-const SumoLogger = proxyquire('../src/sumoLogger', {
-    'lodash.isempty': isEmptyStub
-});
 
 const sandbox = sinon.sandbox.create();
 
@@ -23,7 +18,6 @@ describe('sumoLogger', () => {
     });
 
     afterEach(() => {
-        isEmptyStub.reset();
         onSuccessSpy.resetHistory();
         onErrorSpy.resetHistory();
         sandbox.restore();
@@ -307,7 +301,10 @@ describe('sumoLogger', () => {
                 randomProperty: 'randomValue'
             });
 
-            logger.log(message);
+            logger.log(message, {
+                timestamp,
+                sessionKey
+            });
 
             expect(axios.post).to.have.been.calledWithMatch(
                 endpoint,
@@ -321,7 +318,6 @@ describe('sumoLogger', () => {
         });
 
         it('should not update config if no values are not provided', () => {
-            isEmptyStub.returns(true);
             const logger = new SumoLogger({ endpoint });
 
             const body = JSON.stringify({
@@ -395,43 +391,43 @@ describe('sumoLogger', () => {
         it('no options', () => {
             const logger = new SumoLogger();
             logger.log();
-            expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires you to set an endpoint.');
+            expect(console.error).to.have.been.calledWith('An endpoint value must be provided');
         });
 
         it('no options endpoint property', () => {
             const logger = new SumoLogger({});
             logger.log();
-            expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires you to set an endpoint.');
+            expect(console.error).to.have.been.calledWith('An endpoint value must be provided');
         });
 
         it('undefined options endpoint property', () => {
             const logger = new SumoLogger({ endpoint: undefined });
             logger.log();
-            expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires you to set an endpoint.');
+            expect(console.error).to.have.been.calledWith('An endpoint value must be provided');
         });
 
         it('empty options endpoint property', () => {
             const logger = new SumoLogger({ endpoint: '' });
             logger.log();
-            expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires you to set an endpoint.');
+            expect(console.error).to.have.been.calledWith('An endpoint value must be provided');
         });
 
         it('no message passed to log', () => {
             const logger = new SumoLogger({ endpoint });
             logger.log();
-            expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires that you pass a value to log.');
+            expect(console.error).to.have.been.calledWith('A value must be provided');
         });
 
         it('empty message array passed to log', () => {
             const logger = new SumoLogger({ endpoint });
             logger.log([]);
-            expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires that you pass a value to log.');
+            expect(console.error).to.have.been.calledWith('A value must be provided');
         });
 
         it('empty message object passed to log', () => {
             const logger = new SumoLogger({ endpoint });
             logger.log({});
-            expect(console.error).to.have.been.calledWith('Sumo Logic Logger requires that you pass a non-empty JSON object to log.');
+            expect(console.error).to.have.been.calledWith('A non-empty JSON object must be provided');
         });
 
         it('required graphite message properties not provided', () => {
@@ -442,17 +438,7 @@ describe('sumoLogger', () => {
             logger.log({
                 incorrect: 'value'
             });
-            expect(console.error).to.have.been.calledWith('Sumo Logic requires both \'path\' and \'value\' properties to be provided in the message object');
-        });
-
-        it('error updating config', () => {
-            isEmptyStub.throws(new Error(message));
-
-            const logger = new SumoLogger({ endpoint });
-
-            logger.updateConfig({});
-
-            expect(console.error).to.have.been.calledWith('Could not update Sumo Logic config');
+            expect(console.error).to.have.been.calledWith('Both \'path\' and \'value\' properties must be provided in the message object to send Graphite metrics');
         });
     });
 });
