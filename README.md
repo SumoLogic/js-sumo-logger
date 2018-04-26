@@ -12,6 +12,10 @@ All logs are sent as JSON objects. If you call `log()` with just a string, the s
 
 Messages are batched and sent at the configured interval; default is zero, meaning messages are sent to the server on each call. You can force any queued messages to be sent, typically during a shutdown or logout flow.
 
+| TLS Deprecation Notice |
+| --- |
+| In keeping with industry standard security best practices, as of May 31, 2018, the Sumo Logic service will only support TLS version 1.2 going forward. Verify that all connections to Sumo Logic endpoints are made from software that supports TLS 1.2. |
+
 ### Table of Contents
 * [Installation](#installation)
 * [Demos](#demos)
