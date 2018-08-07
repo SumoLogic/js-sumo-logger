@@ -216,6 +216,27 @@ describe('sumoLogger', () => {
             );
         });
 
+        it('should send log message exactly as provided if raw option enabled', () => {
+            const logger = new SumoLogger({
+                endpoint,
+                raw: true
+            });
+            
+            logger.log([message], {
+                timestamp,
+                sessionKey
+            });
+
+            expect(axios.post).to.have.been.calledWithMatch(
+                endpoint,
+                message, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+        });
+
         it('should call the onSuccess callback if the request succeeds', (done) => {
             axios.post.resolves({ status: 200 });
 
