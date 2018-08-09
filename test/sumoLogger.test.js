@@ -216,12 +216,33 @@ describe('sumoLogger', () => {
             );
         });
 
-        it('should send log message exactly as provided if raw option enabled', () => {
+        it('should send a single log message exactly as provided if raw option enabled', () => {
             const logger = new SumoLogger({
                 endpoint,
                 raw: true
             });
             
+            logger.log(message, {
+                timestamp,
+                sessionKey
+            });
+
+            expect(axios.post).to.have.been.calledWithMatch(
+                endpoint,
+                message, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+        });
+
+        it('should send an array of log messages exactly as provided if raw option enabled', () => {
+            const logger = new SumoLogger({
+                endpoint,
+                raw: true
+            });
+
             logger.log([message], {
                 timestamp,
                 sessionKey
