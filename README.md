@@ -8,7 +8,7 @@ You must have an HTTP source created in your Sumo Logic account to use this SDK.
 
 *Basics:*
 
-All logs are sent as JSON objects. If you call `log()` with just a string, the string is included as a field called `msg`. If you call the function with a JSON object, each field in the object is included as a separate field. Fields called `sessionId`, `url`, and `timestamp` are sent in both cases.
+All logs are sent as JSON objects by default. If you call `log()` with just a string, the string is included as a field called `msg`. If you call the function with a JSON object, each field in the object is included as a separate field. Fields called `sessionId`, `url`, and `timestamp` are sent in both cases.
 
 Messages are batched and sent at the configured interval; default is zero, meaning messages are sent to the server on each call. You can force any queued messages to be sent, typically during a shutdown or logout flow.
 
@@ -17,17 +17,20 @@ Messages are batched and sent at the configured interval; default is zero, meani
 | In keeping with industry standard security best practices, as of May 31, 2018, the Sumo Logic service will only support TLS version 1.2 going forward. Verify that all connections to Sumo Logic endpoints are made from software that supports TLS 1.2. |
 
 ### Table of Contents
-* [Installation](#installation)
-* [Demos](#demos)
-* [Usage](#usage)
-    * [Configuration](#configuration)
-    * [Per Message Options](#per-message-options)
-* [Usage Examples](#usage-examples)
-* [Security Note](#security-note)
-* [Tests](#tests)
-* [Issues](#issues)
-* [Credits](#credits)
-* [License](#license)
+- [Sumo Logic JavaScript Logging SDK](#sumo-logic-javascript-logging-sdk)
+    - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Demos](#demos)
+  - [Usage](#usage)
+    - [Core functions](#core-functions)
+    - [Configuration](#configuration)
+    - [Per Message Options](#per-message-options)
+    - [Usage Examples](#usage-examples)
+  - [Security Note](#security-note)
+  - [Tests](#tests)
+  - [Issues](#issues)
+  - [Credits](#credits)
+  - [License](#license)
 
 ## Installation
 
@@ -109,6 +112,10 @@ You can provide a function that is executed if an error occurs when the logs are
 *graphite (optional, Node version only)*
 
 Enables graphite metrics sending.
+
+*raw (optional, Node version only)*
+
+Enables sending raw text logs exactly as they are passed to the logger.
 
 *clientUrl (optional, Node version only)*
 
