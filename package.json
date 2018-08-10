@@ -6,7 +6,7 @@
   "scripts": {
     "release": "np",
     "http-server": "grunt http-server:dev &",
-    "test": "nyc mocha",
+    "test": "snyk test && nyc mocha",
     "cover": "npm run test && nyc report --reporter=lcov",
     "lint": "eslint src/sumoLogger.js test/**/*.js --fix",
     "build": "babel -d lib src",
@@ -27,14 +27,15 @@
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
     "grunt": "^1.0.2",
-    "grunt-contrib-jasmine": "^1.1.0",
+    "grunt-contrib-jasmine": "^1.2.0",
     "grunt-contrib-uglify": "^3.3.0",
     "grunt-http-server": "^2.1.0",
     "mocha": "^5.0.5",
     "np": "^2.13.1",
     "nyc": "^11.4.1",
     "sinon": "^4.5.0",
-    "sinon-chai": "^3.0.0"
+    "sinon-chai": "^3.0.0",
+    "snyk": "^1.78.0"
   },
   "repository": {
     "type": "git",
