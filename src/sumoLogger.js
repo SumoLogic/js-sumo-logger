@@ -93,12 +93,12 @@ class SumoLogger {
                 logsToSend = [];
                 this.config.onSuccess();
             }).catch((error) => {
-                this.config.onError(error.message);
+                this.config.onError(error);
                 this.pendingLogs = logsToSend;
             });
         } catch (ex) {
             this.pendingLogs = logsToSend;
-            this.config.onError(ex.message);
+            this.config.onError(ex);
         }
     }
 
