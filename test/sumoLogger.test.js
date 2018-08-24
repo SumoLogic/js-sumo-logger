@@ -233,7 +233,8 @@ describe('sumoLogger', () => {
         });
 
         it('should call the onError callback if an error object is returned', (done) => {
-            axios.post.rejects(new Error('unavailable'));
+            const error = new Error('unavailable');
+            axios.post.rejects(error);
 
             const logger = new SumoLogger({
                 endpoint,
@@ -243,7 +244,7 @@ describe('sumoLogger', () => {
             logger.log(message);
 
             setTimeout(() => {
-                expect(onErrorSpy).to.have.been.calledWith('unavailable');
+                expect(onErrorSpy).to.have.been.calledWith(error);
                 done();
             }, 10);
         });
