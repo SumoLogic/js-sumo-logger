@@ -248,6 +248,24 @@ describe('sumoLogger', () => {
                 done();
             }, 10);
         });
+
+        it('should pass the entire error object if an unexpected error is encountered', (done) => {
+            const error = new Error('Unexpected Error');
+
+            axios.post.throws(error);
+
+            const logger = new SumoLogger({
+                endpoint,
+                onError: onErrorSpy
+            });
+
+            logger.log(message);
+
+            setTimeout(() => {
+                expect(onErrorSpy).to.have.been.calledWith(error);
+                done();
+            }, 10);
+        });
     });
 
     describe('updateConfig()', () => {
