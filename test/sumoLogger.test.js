@@ -13,7 +13,8 @@ const sandbox = sinon.sandbox.create();
 
 describe('sumoLogger', () => {
     beforeEach(() => {
-        sandbox.stub(axios, 'post');
+        sandbox.stub(axios, 'post')
+            .returns(new Promise(resolve => resolve()));
         sandbox.spy(console, 'error');
     });
 
