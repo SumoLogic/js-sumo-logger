@@ -41,7 +41,8 @@ class SumoLogger {
             session: newConfig.sessionKey || getUUID(),
             onSuccess: newConfig.onSuccess || NOOP,
             onError: newConfig.onError || NOOP,
-            graphite: newConfig.graphite || false
+            graphite: newConfig.graphite || false,
+            raw: newConfig.raw || false,
         };
     }
 
@@ -174,6 +175,9 @@ class SumoLogger {
         const messages = message.map((item) => {
             if (this.config.graphite) {
                 return `${item.path} ${item.value} ${Math.round(ts.getTime() / 1000)}`;
+            }
+            if (this.config.raw) {
+                return item;
             }
             if (typeof item === 'string') {
                 return JSON.stringify(assignIn({

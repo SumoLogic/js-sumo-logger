@@ -1,6 +1,6 @@
 {
   "name": "sumo-logger",
-  "version": "1.5.0",
+  "version": "1.5.2",
   "description": "Sumo Logic Javascript SDK for sending logs to a HTTP Source endpoint.",
   "main": "lib/sumoLogger.js",
   "scripts": {
@@ -27,7 +27,7 @@
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
     "grunt": "^1.0.2",
-    "grunt-contrib-jasmine": "^1.1.0",
+    "grunt-contrib-jasmine": "^1.2.0",
     "grunt-contrib-uglify": "^3.3.0",
     "grunt-http-server": "^2.1.0",
     "mocha": "^5.0.5",
