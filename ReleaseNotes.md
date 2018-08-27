@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v1.5.2
+* Remove Snyk
+
 ### v1.5.0
 * Adds `raw` option to allow sending a plaintext string as log message
 
