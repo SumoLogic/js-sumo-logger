@@ -6,7 +6,7 @@
   "scripts": {
     "release": "np",
     "http-server": "grunt http-server:dev &",
-    "test": "snyk test && nyc mocha",
+    "test": "nyc mocha",
     "cover": "npm run test && nyc report --reporter=lcov",
     "lint": "eslint src/sumoLogger.js test/**/*.js --fix",
     "build": "babel -d lib src",
@@ -34,8 +34,7 @@
     "np": "^2.13.1",
     "nyc": "^11.4.1",
     "sinon": "^4.5.0",
-    "sinon-chai": "^3.0.0",
-    "snyk": "^1.78.0"
+    "sinon-chai": "^3.0.0"
   },
   "repository": {
     "type": "git",
