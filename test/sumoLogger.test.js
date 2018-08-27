@@ -13,7 +13,8 @@ const sandbox = sinon.sandbox.create();
 
 describe('sumoLogger', () => {
     beforeEach(() => {
-        sandbox.stub(axios, 'post');
+        sandbox.stub(axios, 'post')
+            .returns(new Promise(resolve => resolve()));
         sandbox.spy(console, 'error');
     });
 
@@ -275,7 +276,8 @@ describe('sumoLogger', () => {
         });
 
         it('should call the onError callback if an error object is returned', (done) => {
-            axios.post.rejects(new Error('unavailable'));
+            const error = new Error('unavailable');
+            axios.post.rejects(error);
 
             const logger = new SumoLogger({
                 endpoint,
@@ -285,7 +287,25 @@ describe('sumoLogger', () => {
             logger.log(message);
 
             setTimeout(() => {
-                expect(onErrorSpy).to.have.been.calledWith('unavailable');
+                expect(onErrorSpy).to.have.been.calledWith(error);
+                done();
+            }, 10);
+        });
+
+        it('should pass the entire error object if an unexpected error is encountered', (done) => {
+            const error = new Error('Unexpected Error');
+
+            axios.post.throws(error);
+
+            const logger = new SumoLogger({
+                endpoint,
+                onError: onErrorSpy
+            });
+
+            logger.log(message);
+
+            setTimeout(() => {
+                expect(onErrorSpy).to.have.been.calledWith(error);
                 done();
             }, 10);
         });
