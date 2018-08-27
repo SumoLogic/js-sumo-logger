@@ -31,7 +31,7 @@
     "grunt-contrib-uglify": "^3.3.0",
     "grunt-http-server": "^2.1.0",
     "mocha": "^5.0.5",
-    "np": "^2.13.1",
+    "np": "^2.20.1",
     "nyc": "^11.4.1",
     "sinon": "^4.5.0",
     "sinon-chai": "^3.0.0"
