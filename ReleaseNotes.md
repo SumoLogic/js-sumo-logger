@@ -1,7 +1,7 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
 ### v1.5.3
-* Error and error related testing enhancements (Thanks [James Pence](https://github.com/jamesaspence))
+* Error and error related testing enhancements (Thanks [James Spence](https://github.com/jamesaspence))
 
 ### v1.5.2
 * Remove Snyk
