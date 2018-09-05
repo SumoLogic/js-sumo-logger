@@ -45,7 +45,8 @@ describe('sumoLogger', () => {
                 body,
                 {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-Sumo-Client': 'sumo-javascript-sdk'
                     }
                 }
             );
@@ -72,7 +73,8 @@ describe('sumoLogger', () => {
                 body,
                 {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-Sumo-Client': 'sumo-javascript-sdk'
                     }
                 }
             );
@@ -98,7 +100,8 @@ describe('sumoLogger', () => {
                 body,
                 {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-Sumo-Client': 'sumo-javascript-sdk'
                     }
                 }
             );
@@ -222,7 +225,7 @@ describe('sumoLogger', () => {
                 endpoint,
                 raw: true
             });
-            
+
             logger.log(message, {
                 timestamp,
                 sessionKey
@@ -232,7 +235,8 @@ describe('sumoLogger', () => {
                 endpoint,
                 message, {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-Sumo-Client': 'sumo-javascript-sdk'
                     }
                 }
             );
@@ -253,7 +257,8 @@ describe('sumoLogger', () => {
                 endpoint,
                 message, {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-Sumo-Client': 'sumo-javascript-sdk'
                     }
                 }
             );
@@ -373,7 +378,8 @@ describe('sumoLogger', () => {
                 body,
                 {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-Sumo-Client': 'sumo-javascript-sdk'
                     }
                 }
             );
@@ -401,7 +407,8 @@ describe('sumoLogger', () => {
                 body,
                 {
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'X-Sumo-Client': 'sumo-javascript-sdk'
                     }
                 }
             );

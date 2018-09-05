@@ -42,7 +42,7 @@ class SumoLogger {
             onSuccess: newConfig.onSuccess || NOOP,
             onError: newConfig.onError || NOOP,
             graphite: newConfig.graphite || false,
-            raw: newConfig.raw || false,
+            raw: newConfig.raw || false
         };
     }
 
@@ -68,7 +68,7 @@ class SumoLogger {
 
         try {
             const headers = {
-                "X-Sumo-Client": "sumo-javascript-sdk"
+                'X-Sumo-Client': 'sumo-javascript-sdk'
             };
             if (this.config.graphite) {
                 assignIn(headers, { 'Content-Type': 'application/vnd.sumologic.graphite' });
