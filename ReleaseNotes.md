@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v1.5.4
+* Add "X-Sumo-Client": "sumo-javascript-sdk" header to identify SDK usage (which is common practice in other Sumo Logic open source clients)
+
 ### v1.5.3
 * Error and error related testing enhancements (Thanks [James Pence](https://github.com/jamesaspence))
 

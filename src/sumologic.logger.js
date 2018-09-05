@@ -233,6 +233,7 @@
         }
         xmlHttp.open('POST', this.endpoint + '?callback=logSent', true);
         xmlHttp.setRequestHeader('Content-Type', 'application/json');
+        xmlHttp.setRequestHeader("X-Sumo-Client", "sumo-javascript-sdk");
         if (this.name !== '') {
           xmlHttp.setRequestHeader('X-Sumo-Name', this.name);
         }

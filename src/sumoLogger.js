@@ -67,7 +67,9 @@ class SumoLogger {
         let logsToSend;
 
         try {
-            const headers = {};
+            const headers = {
+                "X-Sumo-Client": "sumo-javascript-sdk"
+            };
             if (this.config.graphite) {
                 assignIn(headers, { 'Content-Type': 'application/vnd.sumologic.graphite' });
             } else {
