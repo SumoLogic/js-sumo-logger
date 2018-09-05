@@ -4,7 +4,7 @@
 * Add "X-Sumo-Client": "sumo-javascript-sdk" header to identify SDK usage (which is common practice in other Sumo Logic open source clients)
 
 ### v1.5.3
-* Error and error related testing enhancements (Thanks [James Pence](https://github.com/jamesaspence))
+* Error and error related testing enhancements (Thanks [James Spence](https://github.com/jamesaspence))
 
 ### v1.5.2
 * Remove Snyk
