@@ -1,5 +1,5 @@
-const SumoLogger = require('../src/sumoLogger');
 const axios = require('axios');
+const SumoLogger = require('../src/sumoLogger');
 
 const onSuccessSpy = sinon.spy();
 const onErrorSpy = sinon.spy();
