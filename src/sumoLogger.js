@@ -140,10 +140,14 @@ class SumoLogger {
         if (type === 'undefined') {
             console.error('A value must be provided');
             return;
-        } else if (this.config.graphite && (!testEl.path || !testEl.value)) {
+        }
+
+        if (this.config.graphite && (!testEl.path || !testEl.value)) {
             console.error('Both \'path\' and \'value\' properties must be provided in the message object to send Graphite metrics');
             return;
-        } else if (type === 'object') {
+        }
+
+        if (type === 'object') {
             if (Object.keys(message).length === 0) {
                 console.error('A non-empty JSON object must be provided');
                 return;
