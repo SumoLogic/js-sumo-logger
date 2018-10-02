@@ -1,9 +1,12 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
-### v1.5.6
+### v.1.58
+* Updated Jasmine
+
+### v1.5.7
 * Updated dependencies and fixed linting (Thanks [Clement](https://github.com/clementallen))
 
-### v.1.5.5
+### v1.5.6
 * Update tests with new header
 
 ### v1.5.4
