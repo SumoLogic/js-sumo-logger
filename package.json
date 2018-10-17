@@ -1,6 +1,6 @@
 {
   "name": "sumo-logger",
-  "version": "1.5.8",
+  "version": "1.5.7",
   "description": "Sumo Logic Javascript SDK for sending logs to a HTTP Source endpoint.",
   "main": "lib/sumoLogger.js",
   "scripts": {
@@ -10,7 +10,6 @@
     "cover": "npm run test && nyc report --reporter=lcov",
     "lint": "eslint src/sumoLogger.js test/**/*.js",
     "build": "babel -d lib src",
-    "prepublish": "npm run build",
     "test:browser": "npm run http-server && open https://127.0.0.1:8282/jasminetest/TrackerSpecRunner.html"
   },
   "dependencies": {
@@ -18,7 +17,7 @@
     "lodash.assignin": "^4.2.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
+    "@babel/cli": "^7.1.2",
     "babel-preset-env": "^1.6.1",
     "chai": "^4.1.2",
     "eslint": "^5.6.0",

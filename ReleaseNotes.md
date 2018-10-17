@@ -1,6 +1,9 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
-### v.1.58
+### v1.6.0
+* Upgrade babel-cli to 7.1.2 due to security alert on a [subpackage](https://nvd.nist.gov/vuln/detail/CVE-2017-16028)
+
+### v.1.5.8
 * Updated Jasmine
 
 ### v1.5.7
