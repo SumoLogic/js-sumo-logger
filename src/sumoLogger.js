@@ -34,6 +34,7 @@ class SumoLogger {
     setConfig(newConfig) {
         this.config = {
             endpoint: newConfig.endpoint,
+            returnPromise: newConfig.hasOwnProperty('returnPromise') ? newConfig.returnPromise : true,
             clientUrl: newConfig.clientUrl || '',
             interval: newConfig.interval || DEFAULT_INTERVAL,
             sourceName: newConfig.sourceName || '',
@@ -50,6 +51,9 @@ class SumoLogger {
     updateConfig(newConfig = {}) {
         if (newConfig.endpoint) {
             this.config.endpoint = newConfig.endpoint;
+        }
+        if (newConfig.returnPromise) {
+            this.config.returnPromise = newConfig.returnPromise;
         }
         if (newConfig.interval) {
             this.config.interval = newConfig.interval;
@@ -89,17 +93,25 @@ class SumoLogger {
             logsToSend = this.pendingLogs;
             this.pendingLogs = [];
 
-            axios.post(
-                this.config.endpoint,
-                logsToSend.join('\n'),
-                { headers }
-            ).then(() => {
-                logsToSend = [];
-                this.config.onSuccess();
-            }).catch((error) => {
-                this.config.onError(error);
-                this.pendingLogs = logsToSend;
-            });
+            if (this.config.returnPromise && logsToSend.length === 1) {
+                return axios.post(
+                    this.config.endpoint,
+                    logsToSend.join('\n'),
+                    { headers }
+                );
+            } else {
+                axios.post(
+                    this.config.endpoint,
+                    logsToSend.join('\n'),
+                    { headers }
+                ).then(() => {
+                    logsToSend = [];
+                    this.config.onSuccess();
+                }).catch((error) => {
+                    this.config.onError(error);
+                    this.pendingLogs = logsToSend;
+                });
+            }
         } catch (ex) {
             this.pendingLogs = logsToSend;
             this.config.onError(ex);
