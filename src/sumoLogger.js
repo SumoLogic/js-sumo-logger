@@ -1,5 +1,6 @@
 const axios = require('axios');
 const assignIn = require('lodash.assignin');
+const formatDate = require('../src/formatDate')
 
 const DEFAULT_INTERVAL = 0;
 const NOOP = () => {};
@@ -176,7 +177,7 @@ class SumoLogger {
             }
         }
 
-        const timestamp = ts.toUTCString();
+        const timestamp = formatDate(ts);
 
         const messages = message.map((item) => {
             if (this.config.graphite) {

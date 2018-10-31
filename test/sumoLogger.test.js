@@ -1,5 +1,6 @@
 const axios = require('axios');
 const SumoLogger = require('../src/sumoLogger');
+const formatDate = require('../src/formatDate')
 
 const onSuccessSpy = sinon.spy();
 const onErrorSpy = sinon.spy();
@@ -9,7 +10,7 @@ const message = 'message';
 const timestamp = new Date();
 const sessionKey = 'abcd1234';
 
-const sandbox = sinon.sandbox.create();
+const sandbox = sinon.createSandbox();
 
 describe('sumoLogger', () => {
     beforeEach(() => {
@@ -31,7 +32,7 @@ describe('sumoLogger', () => {
             const body = JSON.stringify({
                 msg: message,
                 sessionId: sessionKey,
-                timestamp: timestamp.toUTCString(),
+                timestamp: formatDate(timestamp),
                 url: ''
             });
 
@@ -63,7 +64,7 @@ describe('sumoLogger', () => {
 
             const body = JSON.stringify({
                 sessionId: sessionKey,
-                timestamp: timestamp.toUTCString(),
+                timestamp: formatDate(timestamp),
                 url: 'url',
                 key: 'value'
             });
@@ -86,7 +87,7 @@ describe('sumoLogger', () => {
             const body = JSON.stringify({
                 msg: message,
                 sessionId: sessionKey,
-                timestamp: timestamp.toUTCString(),
+                timestamp: formatDate(timestamp),
                 url: ''
             });
 
@@ -122,7 +123,7 @@ describe('sumoLogger', () => {
             const body = JSON.stringify({
                 msg: message,
                 sessionId: sessionKey,
-                timestamp: timestamp.toUTCString(),
+                timestamp: formatDate(timestamp),
                 url: ''
             });
 
@@ -323,7 +324,7 @@ describe('sumoLogger', () => {
             const body = JSON.stringify({
                 msg: message,
                 sessionId: sessionKey,
-                timestamp: timestamp.toUTCString(),
+                timestamp: formatDate(timestamp),
                 url: ''
             });
 
@@ -360,7 +361,7 @@ describe('sumoLogger', () => {
             const body = JSON.stringify({
                 msg: message,
                 sessionId: sessionKey,
-                timestamp: timestamp.toUTCString(),
+                timestamp: formatDate(timestamp),
                 url: ''
             });
 
@@ -391,7 +392,7 @@ describe('sumoLogger', () => {
             const body = JSON.stringify({
                 msg: message,
                 sessionId: sessionKey,
-                timestamp: timestamp.toUTCString(),
+                timestamp: formatDate(timestamp),
                 url: ''
             });
 
