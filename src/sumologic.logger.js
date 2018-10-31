@@ -1,3 +1,15 @@
+/*
+
+DEPRECATED
+
+NOTE: Use of this module is deprecated as of v2.0.0. It will be removed entirely in v3.0.0
+
+Starting with v2.0.0 no updates will be made to this module.
+
+Please use the sumoLogger.js module instead
+
+*/
+
 (function(window, document) {
   'use strict';
   var SESSION_KEY = 'sumologic.logger.session';
@@ -16,6 +28,8 @@
     this.name = '';
     this.onSuccess = false;
     this.onError = false;
+
+    console.warn('Use of this module is deprecated as of v2.0.0. It will be removed entirely in v3.0.0');
   }
 
   function getUUID() {
