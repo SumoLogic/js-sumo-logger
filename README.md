@@ -1,10 +1,8 @@
 # Sumo Logic JavaScript Logging SDK
 
-The [Sumo Logic](http://www.sumologic.com) JavaScript Logging SDK library enables you to send custom log messages to an [HTTP Source](https://help.sumologic.com/Send_Data/Sources/02Sources_for_Hosted_Collectors/HTTP_Source) without installing a Collector on your server.
+The [Sumo Logic](http://www.sumologic.com) JavaScript Logging SDK library enables you to send custom log messages to an [HTTP Source](https://help.sumologic.com/Send_Data/Sources/02Sources_for_Hosted_Collectors/HTTP_Source) without installing a Collector on your server by using a CommonJS module (`sumoLogger.js`).
 
-Included are a plain vanilla JavaScript version (`sumologic.logger.js`) for browser web apps and a Node.js module (`sumoLogger.js`). The configuration options are the same for both versions, but usage is slightly different.
-
-You must have an HTTP source created in your Sumo Logic account to use this SDK. To create one, log into Sumo Logic, go to the Collectors page and either create a new Hosted Collector or add a new HTTP source to an existing Hosted Collector.
+You must have created an HTTP source in your Sumo Logic account to use this SDK. To create one, log into Sumo Logic, go to the Collectors page and either create a new Hosted Collector or add a new HTTP source to an existing Hosted Collector. Online help is available on that page with all the relevant details.
 
 *Basics:*
 
@@ -12,9 +10,9 @@ All logs are sent as JSON objects by default. If you call `log()` with just a st
 
 Messages are batched and sent at the configured interval; default is zero, meaning messages are sent to the server on each call. You can force any queued messages to be sent, typically during a shutdown or logout flow.
 
-| TLS Deprecation Notice |
+| Module Deprecation Notice |
 | --- |
-| In keeping with industry standard security best practices, as of May 31, 2018, the Sumo Logic service will only support TLS version 1.2 going forward. Verify that all connections to Sumo Logic endpoints are made from software that supports TLS 1.2. |
+| NOTE: Use of the `sumologic.logger.js` module is deprecated as of v2.0.0. It will be removed entirely in v3.0.0. Starting with v2.0.0 no updates will be made to this module. Please use the `sumoLogger.js` module instead.  |
 
 ### Table of Contents
 - [Sumo Logic JavaScript Logging SDK](#sumo-logic-javascript-logging-sdk)
@@ -57,37 +55,25 @@ $ npm install --save sumo-logger
 **From GitHub:**
 * Download or clone this repo.
 * Copy the files in the `src` folder into your app/website source.
-* Add `<script src="path/to/sumologic.logger.min.js"></source>` or
-   `<script src="path/to/sumologic.logger.js"></source>` to your pages.
-* Add a `<script>` block with the desired log call, as explained in [Usage](#user-content-usage), to your pages.
+* Add `<script src="path/to/sumologic.logger.js"></source>` to your pages or `import` or `require` the module in your app.
+* Add a `<script>` block with the desired log call to your pages, or use the function as needed in your app, as explained in [Usage](#user-content-usage).
 
 ## Demos
 
-Before running either demo, `cd` to the repo directory and run `npm install`. (You must have node/npm installed already.)
-
-**Node Demo**
+Before running the demo, `cd` to the repo directory and run `npm install`. (You must have node/npm installed already.)
 
 Open `node-example/index.js` in an editor and update the `opts` configuration object at the top of the file with your own values, at least for the endpoint.
 
 In a terminal, switch to the `node-example` directory and run `npm install` again. Then run `node index.js` to launch the server and open a browser tab to [http://localhost:3000/example.html] to see the demo page.
 
-**Browser Demo**
-
-Use a local server to serve up the `example/example.html` file included in this repo. An npm script has been included to simplify loading the page, in your terminal:
-
-* `cd` into the repo root folder,
-* run `npm run http-server`, and,
-* open your browser to (https://127.0.0.1:8282/example).
-
 ## Usage
 
 ### Core functions
 
-* `config`: (Vanilla JS lib only) Set the configuration for sending logs. Options are listed in the next section. In the Node.js module, configuration options are sent when instantiating the object.
 * `log`: Set a log to be sent.
 * `flushLogs`: Force any pending logs to be sent immediately. This is mainly for use in a `logOut`/`window.onBeforeUnload` flow to ensure that any remaining queued messages are sent to Sumo Logic.
-* `startLogSending`: (Node version only) Start sending batched logs at the preconfigured interval
-* `stopLogSending`: (Node version only) Stop sending batched logs
+* `startLogSending`: Start sending batched logs at the preconfigured interval
+* `stopLogSending`: Stop sending batched logs
 
 ### Configuration
 
@@ -96,6 +82,10 @@ Before sending any messages your page should set up the SumoLogger object. Of al
 *endpoint (Required)*
 
 To send your logs, the script must know which HTTP Source to use. Pass this value (which you can get from the Collectors page) in the `endpoint` parameter.
+
+*returnPromise (optional)*
+
+Default: TRUE. Causes `log()` to return a promise and ignore the `onSuccess` and `onError` handler options (if passed). ONLY works when logs are sent individually and not batched (`interval: 0`).
 
 *interval (optional)*
 
@@ -109,21 +99,17 @@ You can provide a function that is executed only when logs are successfully sent
 
 You can provide a function that is executed if an error occurs when the logs are sent.
 
-*graphite (optional, Node version only)*
+*graphite (optional)*
 
 Enables graphite metrics sending.
 
-*raw (optional, Node version only)*
+*raw (optional)*
 
 Enables sending raw text logs exactly as they are passed to the logger.
 
-*clientUrl (optional, Node version only)*
+*clientUrl (optional)*
 
 You can provide a URL, in the Node version of this SDK only, which will be sent as the `url` field of the log line. In the vanilla JS version, the URL is detected from the browser's `window.location` value.
-
-*sendErrors (optional, Browser version only)*
-
-Setting `sendErrors` to `true` will send all the unhandled errors to Sumo Logic with the error message, URL, line number, and column number. This attribute plays well with any other window.onerror functions that have been defined.
 
 *sessionKey (optional)*
 
@@ -164,6 +150,7 @@ Override client URL set in the `config` call. (Node version only)
 ```javascript
   var opts = {
     endpoint: "https://us2-events.sumologic.com/receiver/v1/http/222loremipsumetc32FG",
+    returnPromise: false,
     interval: 20000, // Send messages in batches every 20 seconds
     sendErrors: true,
     sessionKey: 'Abc32df34rfg54gui8j098dv13sq5re', // generate a GUID
@@ -179,8 +166,6 @@ Override client URL set in the `config` call. (Node version only)
     graphite: true // Enable graphite metrics
   };
 ```
-
-**Node.js:**
 
 ***Logging***
 ```javascript
@@ -198,7 +183,8 @@ const sumoLogger = new SumoLogger(opts);
 sumoLogger.log('event message to log', {
   sessionKey: 'your session key value',
   url: 'https://youDomain.com/actual/page/served'
-});
+}).then(() => /* handle positive response */)
+.catch(() => /* handle error response */);
 
 // Flush any logs, typically this line would be in your shutdown code
 sumoLogger.flushLogs();
@@ -220,42 +206,8 @@ const sumoLogger = new SumoLogger(opts);
 sumoLogger.log({
   path: 'metric.path', // metric path as a dot separated string
   value: 100 // value of the metric
-});
-```
-
-**Browser Apps:**
-
-```html
-<script>
-  // Configure the logger
-  SLLogger.config({
-    endpoint: "https://us2-events.sumologic.com/receiver/v1/http/222loremipsumetc32FG",
-  });
-
-  // Push messages to be logged
-  // Simple text
-  SLLogger.log('A simple log message');
-
-  // With per message options
-  SLLogger.log(
-    'A simple log message',
-    {
-      sessionKey: 'Abc32df34rfg54gui8j098dv13sq5re',
-      timestamp: new Date()
-     });
-
-  // JSON, which can use field names specified in Field Extraction Rules
-  SLLogger.log({
-    "userType": "silver",
-    "referralSource": referralSource,
-    "campaignId": campaignId
-  });
-
-  // Flush any logs, typically this line would be in your shutdown code
-  window.addEventListener('beforeunload', function() {
-    SLLogger.flushLogs();
-  });
-</script>
+}).then(() => /* handle positive response */)
+.catch(() => /* handle error response */);
 ```
 
 *Field Extraction Rules:* [fields in Sumo Logic](https://service.sumologic.com/help/Default.htm#About_Field_Extraction.htm)
@@ -266,13 +218,11 @@ Sumo Logic is always concerned with security but in some instances we must balan
 
 Hitting an HTTP source endpoint from code running in a web browser exposes the endpoint URL to anyone inspecting the code or running your app with the browser console open to the network tab. There is no means to obfuscate or hide this. The risk is some malicious individual will send additional traffic to the endpoint, potentially using up your ingest or polluting your searches.
 
-If this is a concern for you, **we recommend using the Node.js version of the lib** so your endpoint URL is never exposed.
+If this is a concern for you, **we recommend using the the lib from a Node.js app running on your server** so your endpoint URL is never exposed.
 
 One method for minimizing the damage from some malicious users, should you choose to use this or other similar code in the browser, is adding an arbitrary string based on a regex to your log message and adding a processing rule to the HTTP source configuration that blocks incoming messages which lack a match for the regex.
 
 ## Tests
-
-***Node***
 
 Tests are in the `test/` directory and can be run using the following command
 ```
@@ -283,14 +233,6 @@ To generate a coverage report which is visible at `coverage/lcov-report/index.ht
 ```
 $ npm run cover
 ```
-
-***Browser***
-
-Test are in `jasminetest/sumologic-logger-spec.js` and can be run by loading `http://[your domain:port]/jasminetest/TrackerSpecRunner.html`.
-
-To run the tests, open `jasminetest/sumologic-logger-spec.js` and update the `sumoTestEndpoint` variable on line 2 with your HTTP source endpoint. You must have already run `npm install` in the root of the repo.
-
-For example, if you use the Grunt server explained above, the tests will run at `https://127.0.0.1:8282/jasminetest/TrackerSpecRunner.html`.
 
 For a shortcut you may use the included npm test script, which will start the Grunt server and open the testRunner page:
 
@@ -304,8 +246,8 @@ Please file issues or feature requests on this Github repo.
 
 ## Credits
 
-Thanks to [Clement Allen](https://github.com/clementallen) for his contributions to this project.
+Thanks to [Clement Allen](https://github.com/clementallen) for his many contributions to this project.
 
 ## License
 
-Copyright 2017, Sumo Logic, Inc. The Sumo Logic JavaScript Logging SDK is published under the Apache Software License, Version 2.0. Please visit http://www.apache.org/licenses/LICENSE-2.0.txt for details.
+Copyright 2017-2018, Sumo Logic, Inc. The Sumo Logic JavaScript Logging SDK is published under the Apache Software License, Version 2.0. Please visit http://www.apache.org/licenses/LICENSE-2.0.txt for details.
