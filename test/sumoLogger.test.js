@@ -275,7 +275,9 @@ describe('sumoLogger', () => {
             });
 
             const prom = logger.log(message);
-            prom.then((result) => onPromiseReturnSpy);
+            prom.then((result) => {
+                onPromiseReturnSpy();
+            });
 
             setTimeout(() => {
                 expect(onPromiseReturnSpy).to.have.been.calledOnce;
