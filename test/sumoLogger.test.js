@@ -285,6 +285,27 @@ describe('sumoLogger', () => {
             }, 10);
         });
 
+        it('should hit the returnPromise promise catch handler if the request fails', (done) => {
+            const error = new Error('unavailable');
+            axios.post.rejects(error);
+
+            const logger = new SumoLogger({
+                endpoint,
+            });
+
+            const prom = logger.log(message);
+            prom.then((result) => {
+                onPromiseReturnSpy();
+            }).catch((ex) => {
+                onErrorSpy();
+            });
+
+            setTimeout(() => {
+                expect(onErrorSpy).to.have.been.calledOnce;
+                done();
+            }, 10);
+        });
+
         it('should call the onSuccess callback if the request succeeds and returnPromise is false', (done) => {
             axios.post.resolves({ status: 200 });
 
