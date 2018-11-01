@@ -94,11 +94,12 @@ class SumoLogger {
             this.pendingLogs = [];
 
             if (this.config.returnPromise && logsToSend.length === 1) {
-                return axios.post(
+                const post = axios.post(
                     this.config.endpoint,
                     logsToSend.join('\n'),
                     { headers }
                 );
+                return post;
             } else {
                 axios.post(
                     this.config.endpoint,
@@ -135,7 +136,7 @@ class SumoLogger {
     }
 
     flushLogs() {
-        this.sendLogs();
+        return this.sendLogs();
     }
 
     log(msg, optionalConfig) {
@@ -215,7 +216,7 @@ class SumoLogger {
         this.pendingLogs = this.pendingLogs.concat(messages);
 
         if (this.config.interval === 0) {
-            this.sendLogs();
+            return this.sendLogs();
         }
     }
 }

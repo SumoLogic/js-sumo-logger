@@ -274,8 +274,8 @@ describe('sumoLogger', () => {
                 endpoint,
             });
 
-            const promise = logger.log(message);
-            promise.then((result) => onPromiseReturnSpy);
+            const prom = logger.log(message);
+            prom.then((result) => onPromiseReturnSpy);
 
             setTimeout(() => {
                 expect(onPromiseReturnSpy).to.have.been.calledOnce;
