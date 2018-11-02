@@ -323,7 +323,7 @@ describe('sumoLogger', () => {
             }, 10);
         });
 
-        it('should call the onError callback if an error object is returne and returnPromise is falsed', (done) => {
+        it('should call the onError callback if an error object is returned and returnPromise is falsed', (done) => {
             const error = new Error('unavailable');
             axios.post.rejects(error);
 

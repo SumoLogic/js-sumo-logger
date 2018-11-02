@@ -94,12 +94,11 @@ class SumoLogger {
             this.pendingLogs = [];
 
             if (this.config.returnPromise && logsToSend.length === 1) {
-                const post = axios.post(
+                return axios.post(
                     this.config.endpoint,
                     logsToSend.join('\n'),
                     { headers }
                 );
-                return post;
             } else {
                 axios.post(
                     this.config.endpoint,
