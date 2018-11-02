@@ -55,7 +55,7 @@ $ npm install --save sumo-logger
 **From GitHub:**
 * Download or clone this repo.
 * Copy the files in the `src` folder into your app/website source.
-* Add `<script src="path/to/sumologic.logger.js"></source>` to your pages or `import` or `require` the module in your app.
+* Add `<script src="path/to/sumoLogger.js"></source>` to your pages or `import` or `require` the module in your app.
 * Add a `<script>` block with the desired log call to your pages, or use the function as needed in your app, as explained in [Usage](#user-content-usage).
 
 ## Demos
