@@ -1,6 +1,6 @@
 const axios = require('axios');
 const SumoLogger = require('../src/sumoLogger');
-const formatDate = require('../src/formatDate')
+const formatDate = require('../src/formatDate');
 
 const onSuccessSpy = sinon.spy();
 const onErrorSpy = sinon.spy();
@@ -271,11 +271,11 @@ describe('sumoLogger', () => {
             axios.post.resolves({ status: 200 });
 
             const logger = new SumoLogger({
-                endpoint,
+                endpoint
             });
 
             const prom = logger.log(message);
-            prom.then((result) => {
+            prom.then(() => {
                 onPromiseReturnSpy();
             });
 
@@ -290,14 +290,14 @@ describe('sumoLogger', () => {
             axios.post.rejects(error);
 
             const logger = new SumoLogger({
-                endpoint,
+                endpoint
             });
 
             const prom = logger.log(message);
-            prom.then((result) => {
+            prom.then(() => {
                 onPromiseReturnSpy();
             }).catch((ex) => {
-                onErrorSpy();
+                onErrorSpy(ex);
             });
 
             setTimeout(() => {

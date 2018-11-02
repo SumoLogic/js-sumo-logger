@@ -1,6 +1,6 @@
 const axios = require('axios');
 const assignIn = require('lodash.assignin');
-const formatDate = require('../src/formatDate')
+const formatDate = require('../src/formatDate');
 
 const DEFAULT_INTERVAL = 0;
 const NOOP = () => {};
@@ -34,7 +34,7 @@ class SumoLogger {
     setConfig(newConfig) {
         this.config = {
             endpoint: newConfig.endpoint,
-            returnPromise: newConfig.hasOwnProperty('returnPromise') ? newConfig.returnPromise : true,
+            returnPromise: Object.prototype.hasOwnProperty.call(newConfig, 'returnPromise') ? newConfig.returnPromise : true,
             clientUrl: newConfig.clientUrl || '',
             interval: newConfig.interval || DEFAULT_INTERVAL,
             sourceName: newConfig.sourceName || '',
@@ -66,7 +66,7 @@ class SumoLogger {
 
     sendLogs() {
         if (this.pendingLogs.length === 0) {
-            return;
+            return false;
         }
 
         let logsToSend;
@@ -99,22 +99,22 @@ class SumoLogger {
                     logsToSend.join('\n'),
                     { headers }
                 );
-            } else {
-                axios.post(
-                    this.config.endpoint,
-                    logsToSend.join('\n'),
-                    { headers }
-                ).then(() => {
-                    logsToSend = [];
-                    this.config.onSuccess();
-                }).catch((error) => {
-                    this.config.onError(error);
-                    this.pendingLogs = logsToSend;
-                });
             }
+            return axios.post(
+                this.config.endpoint,
+                logsToSend.join('\n'),
+                { headers }
+            ).then(() => {
+                logsToSend = [];
+                this.config.onSuccess();
+            }).catch((error) => {
+                this.config.onError(error);
+                this.pendingLogs = logsToSend;
+            });
         } catch (ex) {
             this.pendingLogs = logsToSend;
             this.config.onError(ex);
+            return false;
         }
     }
 
