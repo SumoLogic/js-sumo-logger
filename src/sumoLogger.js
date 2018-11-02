@@ -143,7 +143,7 @@ class SumoLogger {
 
         if (!message) {
             console.error('A value must be provided');
-            return;
+            return false;
         }
 
         const isArray = message instanceof Array;
@@ -152,18 +152,18 @@ class SumoLogger {
 
         if (type === 'undefined') {
             console.error('A value must be provided');
-            return;
+            return false;
         }
 
         if (this.config.graphite && (!testEl.path || !testEl.value)) {
             console.error('Both \'path\' and \'value\' properties must be provided in the message object to send Graphite metrics');
-            return;
+            return false;
         }
 
         if (type === 'object') {
             if (Object.keys(message).length === 0) {
                 console.error('A non-empty JSON object must be provided');
-                return;
+                return false;
             }
         }
 
