@@ -1,15 +1,17 @@
 const axios = require('axios');
 const SumoLogger = require('../src/sumoLogger');
+const formatDate = require('../src/formatDate');
 
 const onSuccessSpy = sinon.spy();
 const onErrorSpy = sinon.spy();
+const onPromiseReturnSpy = sinon.spy();
 
 const endpoint = 'endpoint';
 const message = 'message';
 const timestamp = new Date();
 const sessionKey = 'abcd1234';
 
-const sandbox = sinon.sandbox.create();
+const sandbox = sinon.createSandbox();
 
 describe('sumoLogger', () => {
     beforeEach(() => {
@@ -21,6 +23,7 @@ describe('sumoLogger', () => {
     afterEach(() => {
         onSuccessSpy.resetHistory();
         onErrorSpy.resetHistory();
+        onPromiseReturnSpy.resetHistory();
         sandbox.restore();
     });
 
@@ -31,7 +34,7 @@ describe('sumoLogger', () => {
             const body = JSON.stringify({
                 msg: message,
                 sessionId: sessionKey,
-                timestamp: timestamp.toUTCString(),
+                timestamp: formatDate(timestamp),
                 url: ''
             });
 
@@ -63,7 +66,7 @@ describe('sumoLogger', () => {
 
             const body = JSON.stringify({
                 sessionId: sessionKey,
-                timestamp: timestamp.toUTCString(),
+                timestamp: formatDate(timestamp),
                 url: 'url',
                 key: 'value'
             });
@@ -86,7 +89,7 @@ describe('sumoLogger', () => {
             const body = JSON.stringify({
                 msg: message,
                 sessionId: sessionKey,
-                timestamp: timestamp.toUTCString(),
+                timestamp: formatDate(timestamp),
                 url: ''
             });
 
@@ -122,7 +125,7 @@ describe('sumoLogger', () => {
             const body = JSON.stringify({
                 msg: message,
                 sessionId: sessionKey,
-                timestamp: timestamp.toUTCString(),
+                timestamp: formatDate(timestamp),
                 url: ''
             });
 
@@ -264,11 +267,51 @@ describe('sumoLogger', () => {
             );
         });
 
-        it('should call the onSuccess callback if the request succeeds', (done) => {
+        it('should hit the returnPromise promise then handler if the request succeeds', (done) => {
+            axios.post.resolves({ status: 200 });
+
+            const logger = new SumoLogger({
+                endpoint
+            });
+
+            const prom = logger.log(message);
+            prom.then(() => {
+                onPromiseReturnSpy();
+            });
+
+            setTimeout(() => {
+                expect(onPromiseReturnSpy).to.have.been.calledOnce;
+                done();
+            }, 10);
+        });
+
+        it('should hit the returnPromise promise catch handler if the request fails', (done) => {
+            const error = new Error('unavailable');
+            axios.post.rejects(error);
+
+            const logger = new SumoLogger({
+                endpoint
+            });
+
+            const prom = logger.log(message);
+            prom.then(() => {
+                onPromiseReturnSpy();
+            }).catch((ex) => {
+                onErrorSpy(ex);
+            });
+
+            setTimeout(() => {
+                expect(onErrorSpy).to.have.been.calledOnce;
+                done();
+            }, 10);
+        });
+
+        it('should call the onSuccess callback if the request succeeds and returnPromise is false', (done) => {
             axios.post.resolves({ status: 200 });
 
             const logger = new SumoLogger({
                 endpoint,
+                returnPromise: false,
                 onSuccess: onSuccessSpy
             });
 
@@ -280,12 +323,13 @@ describe('sumoLogger', () => {
             }, 10);
         });
 
-        it('should call the onError callback if an error object is returned', (done) => {
+        it('should call the onError callback if an error object is returned and returnPromise is falsed', (done) => {
             const error = new Error('unavailable');
             axios.post.rejects(error);
 
             const logger = new SumoLogger({
                 endpoint,
+                returnPromise: false,
                 onError: onErrorSpy
             });
 
@@ -323,7 +367,7 @@ describe('sumoLogger', () => {
             const body = JSON.stringify({
                 msg: message,
                 sessionId: sessionKey,
-                timestamp: timestamp.toUTCString(),
+                timestamp: formatDate(timestamp),
                 url: ''
             });
 
@@ -360,7 +404,7 @@ describe('sumoLogger', () => {
             const body = JSON.stringify({
                 msg: message,
                 sessionId: sessionKey,
-                timestamp: timestamp.toUTCString(),
+                timestamp: formatDate(timestamp),
                 url: ''
             });
 
@@ -391,7 +435,7 @@ describe('sumoLogger', () => {
             const body = JSON.stringify({
                 msg: message,
                 sessionId: sessionKey,
-                timestamp: timestamp.toUTCString(),
+                timestamp: formatDate(timestamp),
                 url: ''
             });
 

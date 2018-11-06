@@ -1,5 +1,6 @@
 const axios = require('axios');
 const assignIn = require('lodash.assignin');
+const formatDate = require('../src/formatDate');
 
 const DEFAULT_INTERVAL = 0;
 const NOOP = () => {};
@@ -33,6 +34,7 @@ class SumoLogger {
     setConfig(newConfig) {
         this.config = {
             endpoint: newConfig.endpoint,
+            returnPromise: Object.prototype.hasOwnProperty.call(newConfig, 'returnPromise') ? newConfig.returnPromise : true,
             clientUrl: newConfig.clientUrl || '',
             interval: newConfig.interval || DEFAULT_INTERVAL,
             sourceName: newConfig.sourceName || '',
@@ -50,6 +52,9 @@ class SumoLogger {
         if (newConfig.endpoint) {
             this.config.endpoint = newConfig.endpoint;
         }
+        if (newConfig.returnPromise) {
+            this.config.returnPromise = newConfig.returnPromise;
+        }
         if (newConfig.interval) {
             this.config.interval = newConfig.interval;
             this.startLogSending();
@@ -61,7 +66,7 @@ class SumoLogger {
 
     sendLogs() {
         if (this.pendingLogs.length === 0) {
-            return;
+            return false;
         }
 
         let logsToSend;
@@ -88,7 +93,14 @@ class SumoLogger {
             logsToSend = this.pendingLogs;
             this.pendingLogs = [];
 
-            axios.post(
+            if (this.config.returnPromise && logsToSend.length === 1) {
+                return axios.post(
+                    this.config.endpoint,
+                    logsToSend.join('\n'),
+                    { headers }
+                );
+            }
+            return axios.post(
                 this.config.endpoint,
                 logsToSend.join('\n'),
                 { headers }
@@ -102,6 +114,7 @@ class SumoLogger {
         } catch (ex) {
             this.pendingLogs = logsToSend;
             this.config.onError(ex);
+            return false;
         }
     }
 
@@ -122,7 +135,7 @@ class SumoLogger {
     }
 
     flushLogs() {
-        this.sendLogs();
+        return this.sendLogs();
     }
 
     log(msg, optionalConfig) {
@@ -130,7 +143,7 @@ class SumoLogger {
 
         if (!message) {
             console.error('A value must be provided');
-            return;
+            return false;
         }
 
         const isArray = message instanceof Array;
@@ -139,18 +152,18 @@ class SumoLogger {
 
         if (type === 'undefined') {
             console.error('A value must be provided');
-            return;
+            return false;
         }
 
         if (this.config.graphite && (!testEl.path || !testEl.value)) {
             console.error('Both \'path\' and \'value\' properties must be provided in the message object to send Graphite metrics');
-            return;
+            return false;
         }
 
         if (type === 'object') {
             if (Object.keys(message).length === 0) {
                 console.error('A non-empty JSON object must be provided');
-                return;
+                return false;
             }
         }
 
@@ -176,7 +189,7 @@ class SumoLogger {
             }
         }
 
-        const timestamp = ts.toUTCString();
+        const timestamp = formatDate(ts);
 
         const messages = message.map((item) => {
             if (this.config.graphite) {
@@ -202,7 +215,7 @@ class SumoLogger {
         this.pendingLogs = this.pendingLogs.concat(messages);
 
         if (this.config.interval === 0) {
-            this.sendLogs();
+            return this.sendLogs();
         }
     }
 }
