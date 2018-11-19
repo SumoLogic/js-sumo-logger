@@ -210,7 +210,7 @@ sumoLogger.log({
 .catch(() => /* handle error response */);
 ```
 
-*Field Extraction Rules:* [fields in Sumo Logic](https://service.sumologic.com/help/Default.htm#About_Field_Extraction.htm)
+*Field Extraction Rules:* [fields in Sumo Logic](https://help.sumologic.com/Manage/Search-Optimization-Tools/Manage-Field-Extractions)
 
 ## Security Note
 

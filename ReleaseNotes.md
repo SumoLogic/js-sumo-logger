@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.0.1
+* Update Field Extraction Rules link
+
 ### v2.0.0
 * DEPRECATION NOTICE: The sumologic.logger.js module is DEPRECATED and will be removed in v3.0.0. Docs have been updated to reflect this and no changes, including those mentioned in these release notes, will be ported to it.
 * POTENTIAL BREAKING CHANGE: The timestamp format used by this library is not handled properly by the Sumo Logic backend and could cause your logs to be inserted at the wrong times. The timestamp format used is updated to be `yyyy-MM-dd'T'HH:mm:ss*SSSZZZZ` (e.g., `2018-08-20'T'13:20:10*633+0000`).
