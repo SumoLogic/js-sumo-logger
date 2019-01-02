@@ -248,6 +248,10 @@ Please file issues or feature requests on this Github repo.
 
 Thanks to [Clement Allen](https://github.com/clementallen) for his many contributions to this project.
 
+## TLS 1.2 Requirement
+
+Sumo Logic only accepts connections from clients using TLS version 1.2 or greater. To utilize the content of this repo, ensure that it's running in an execution environment that is configured to use TLS 1.2 or greater.
+
 ## License
 
 Copyright 2017-2018, Sumo Logic, Inc. The Sumo Logic JavaScript Logging SDK is published under the Apache Software License, Version 2.0. Please visit http://www.apache.org/licenses/LICENSE-2.0.txt for details.
