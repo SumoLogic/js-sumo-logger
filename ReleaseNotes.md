@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.0.2
+* Restore build functionality so `lib` files are updated
+
 ### v2.0.1
 * Update Field Extraction Rules link
 
