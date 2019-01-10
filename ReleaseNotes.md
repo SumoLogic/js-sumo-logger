@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.0.3
+* Bundled library now uses correct formatDate file (Thanks [Clement](https://github.com/clementallen)
+
 ### v2.0.2
 * Restore build functionality so `lib` files are updated
 
@@ -18,7 +21,7 @@
 * Updated Jasmine
 
 ### v1.5.7
-* Updated dependencies and fixed linting (Thanks [Clement](https://github.com/clementallen))
+* Updated dependencies and fixed linting (Thanks [Clement](https://github.com/clementallen)
 
 ### v1.5.6
 * Update tests with new header
@@ -27,7 +30,7 @@
 * Add "X-Sumo-Client": "sumo-javascript-sdk" header to identify SDK usage (which is common practice in other Sumo Logic open source clients)
 
 ### v1.5.3
-* Error and error related testing enhancements (Thanks [James Spence](https://github.com/jamesaspence))
+* Error and error related testing enhancements (Thanks [James Spence](https://github.com/jamesaspence)
 
 ### v1.5.2
 * Remove Snyk
