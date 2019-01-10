@@ -1,6 +1,6 @@
 const axios = require('axios');
 const assignIn = require('lodash.assignin');
-const formatDate = require('../src/formatDate');
+const formatDate = require('./formatDate');
 
 const DEFAULT_INTERVAL = 0;
 const NOOP = () => {};
