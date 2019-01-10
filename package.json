@@ -8,7 +8,7 @@
     "http-server": "grunt http-server:dev &",
     "test": "nyc mocha",
     "cover": "npm run test && nyc report --reporter=lcov",
-    "lint": "eslint src/sumoLogger.js test/**/*.js",
+    "lint": "eslint src/sumoLogger.js src/formatDate.js test/**/*.js",
     "build": "babel -d lib src",
     "test:browser": "npm run http-server && open https://127.0.0.1:8282/jasminetest/TrackerSpecRunner.html"
   },
@@ -17,22 +17,22 @@
     "lodash.assignin": "^4.2.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.1.2",
+    "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
-    "chai": "^4.1.2",
-    "eslint": "^5.8.0",
-    "eslint-plugin-node": "^8.0.0",
+    "chai": "^4.2.0",
+    "eslint": "^5.12.0",
+    "eslint-plugin-node": "^8.0.1",
     "grunt": "^1.0.2",
     "grunt-contrib-jasmine": "^2.0.2",
     "grunt-contrib-uglify": "^3.3.0",
     "grunt-http-server": "^2.1.0",
     "gulp-babel": "^8.0.0",
-    "mocha": "^5.0.5",
-    "np": "^3.0.4",
-    "nyc": "^13.0.1",
-    "sinon": "^6.3.4",
-    "sinon-chai": "^3.0.0"
+    "mocha": "^5.2.0",
+    "np": "^3.1.0",
+    "nyc": "^13.1.0",
+    "sinon": "^7.2.2",
+    "sinon-chai": "^3.3.0"
   },
   "repository": {
     "type": "git",
