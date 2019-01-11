@@ -10,7 +10,8 @@
     "cover": "npm run test && nyc report --reporter=lcov",
     "lint": "eslint src/sumoLogger.js src/formatDate.js test/**/*.js",
     "build": "babel -d lib src",
-    "test:browser": "npm run http-server && open https://127.0.0.1:8282/jasminetest/TrackerSpecRunner.html"
+    "test:browser": "npm run http-server && open https://127.0.0.1:8282/jasminetest/TrackerSpecRunner.html",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -36,10 +37,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:SumoLogic/js-logging-sdk.git"
+    "url": "git@github.com:SumoLogic/js-sumo-logger.git"
   },
   "keywords": [
-    "sumologic-js-sdk",
+    "sumo-logger",
     "jslogger",
     "sumologic",
     "logs",
@@ -48,7 +49,7 @@
   "author": "Sumo Logic",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/sumologic/sumologic-js-sdk/issues"
+    "url": "https://github.com/sumologic/js-sumo-logger/issues"
   },
-  "homepage": "https://github.com/sumologic/sumologic-js-sdk#readme"
+  "homepage": "https://github.com/sumologic/js-sumo-logger#readme"
 }
