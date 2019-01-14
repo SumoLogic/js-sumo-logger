@@ -1,5 +1,9 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.0.4
+* Adds pre-publish task
+* Fixes some URLs in package.json
+
 ### v2.0.3
 * Bundled library now uses correct formatDate file (Thanks [Clement](https://github.com/clementallen)
 
