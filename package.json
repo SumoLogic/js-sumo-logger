@@ -14,15 +14,15 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "axios": "^0.18.0",
-    "lodash.assignin": "^4.2.0"
+    "axios": "^0.18.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
+    "@babel/plugin-transform-object-assign": "^7.2.0",
     "@babel/preset-env": "^7.2.3",
     "chai": "^4.2.0",
-    "eslint": "^5.12.0",
+    "eslint": "^5.12.1",
     "eslint-plugin-node": "^8.0.1",
     "grunt": "^1.0.2",
     "grunt-contrib-jasmine": "^2.0.2",
