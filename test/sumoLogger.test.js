@@ -551,7 +551,19 @@ describe('sumoLogger', () => {
             logger.log({
                 incorrect: 'value'
             });
-            expect(console.error).to.have.been.calledWith('Both \'path\' and \'value\' properties must be provided in the message object to send Graphite metrics');
+            expect(console.error).to.have.been.calledWith('Both "path" and "value" properties must be provided in the message object to send Graphite metrics');
+        });
+
+        it('should not not throw an error if falsy parameters are provided', () => {
+            const logger = new SumoLogger({
+                endpoint,
+                graphite: true
+            })
+            logger.log({
+                path: '/this/is/a/path',
+                value: 0
+            });
+            expect(console.error).to.not.have.been.called;
         });
     });
 });

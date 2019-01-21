@@ -5,6 +5,7 @@ node-example/
 test/
 .nyc_output/
 coverage/
-docs/
+.babelrc
+.eslintrc
 .travis.yml
 Gruntfile.js
