@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.0.6
+* Updated packages to clear most security advisories and install a peer dependency not automatically installed otherwise
+
 ### v2.0.5
 * Replace `lodash.assignIn()` with `Object.assign()`
 * Fixes an issue where falsey evaluation can have unintended side effect
