@@ -1,5 +1,9 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.0.5
+* Replace `lodash.assignIn()` with `Object.assign()`
+* Fixes an issue where falsey evaluation can have unintended side effect
+
 ### v2.0.4
 * Adds pre-publish task
 * Fixes some URLs in package.json
