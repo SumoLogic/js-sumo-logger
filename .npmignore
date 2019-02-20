@@ -1,11 +1,8 @@
 docs/
 example/
-jasminetest/
-node-example/
 test/
 .nyc_output/
 coverage/
 .babelrc
 .eslintrc
 .travis.yml
-Gruntfile.js

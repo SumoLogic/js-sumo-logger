@@ -5,30 +5,28 @@
   "main": "lib/sumoLogger.js",
   "scripts": {
     "release": "np",
-    "test": "nyc mocha",
-    "cover": "npm run test && nyc report --reporter=lcov",
+    "test": "nyc mocha --exit",
+    "cover": "nyc --reporter=lcov npm test",
     "lint": "eslint src/sumoLogger.js src/formatDate.js test/**/*.js",
     "build": "babel -d lib src",
-    "test:browser": "npm run http-server && open https://127.0.0.1:8282/jasminetest/TrackerSpecRunner.html",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "acorn": "^6.0.5",
     "axios": "^0.18.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
-    "@babel/core": "^7.2.2",
+    "@babel/core": "^7.3.3",
     "@babel/plugin-transform-object-assign": "^7.2.0",
-    "@babel/preset-env": "^7.2.3",
+    "@babel/preset-env": "^7.3.1",
     "chai": "^4.2.0",
-    "eslint": "^5.13.0",
+    "eslint": "^5.14.1",
     "eslint-plugin-node": "^8.0.1",
     "gulp-babel": "^8.0.0",
-    "mocha": "^5.2.0",
-    "np": "^3.1.0",
+    "mocha": "^6.0.0",
+    "np": "^4.0.2",
     "nyc": "^13.3.0",
-    "sinon": "^7.2.2",
+    "sinon": "^7.2.4",
     "sinon-chai": "^3.3.0"
   },
   "repository": {
