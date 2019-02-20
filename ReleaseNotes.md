@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.1.0
+* Removed demos and related Grunt as unnecessary in light of documentation
+
 ### v2.0.6
 * Updated packages to clear most security advisories and install a peer dependency not automatically installed otherwise
 
