@@ -18,7 +18,6 @@ Messages are batched and sent at the configured interval; default is zero, meani
 - [Sumo Logic JavaScript Logging SDK](#sumo-logic-javascript-logging-sdk)
     - [Table of Contents](#table-of-contents)
   - [Installation](#installation)
-  - [Demos](#demos)
   - [Usage](#usage)
     - [Core functions](#core-functions)
     - [Configuration](#configuration)
@@ -57,14 +56,6 @@ $ npm install --save sumo-logger
 * Copy the files in the `src` folder into your app/website source.
 * Add `<script src="path/to/sumoLogger.js"></source>` to your pages or `import` or `require` the module in your app.
 * Add a `<script>` block with the desired log call to your pages, or use the function as needed in your app, as explained in [Usage](#user-content-usage).
-
-## Demos
-
-Before running the demo, `cd` to the repo directory and run `npm install`. (You must have node/npm installed already.)
-
-Open `node-example/index.js` in an editor and update the `opts` configuration object at the top of the file with your own values, at least for the endpoint.
-
-In a terminal, switch to the `node-example` directory and run `npm install` again. Then run `node index.js` to launch the server and open a browser tab to [http://localhost:3000/example.html] to see the demo page.
 
 ## Usage
 
