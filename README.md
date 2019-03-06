@@ -225,12 +225,6 @@ To generate a coverage report which is visible at `coverage/lcov-report/index.ht
 $ npm run cover
 ```
 
-For a shortcut you may use the included npm test script, which will start the Grunt server and open the testRunner page:
-
-```
-$ npm run test:browser
-````
-
 ## Issues
 
 Please file issues or feature requests on this Github repo.

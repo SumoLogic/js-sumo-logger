@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.1.1
+* Removed obsolete Jasmine tests and links to Grunt
+
 ### v2.1.0
 * Removed demos and related Grunt as unnecessary in light of documentation
 
