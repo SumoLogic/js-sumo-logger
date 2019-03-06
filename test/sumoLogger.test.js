@@ -276,7 +276,7 @@ describe('sumoLogger', () => {
                 msgs.push(msg);
             }
 
-            msgs.forEach((mess, i) => {
+            msgs.forEach((mess) => {
                 logger.log(mess, {
                     timestamp,
                     sessionKey
@@ -394,7 +394,7 @@ describe('sumoLogger', () => {
             logger.updateConfig({
                 endpoint: 'newendpoint',
                 sourceCategory: 'newSourceCategory',
-                interval: 10,
+                interval: 10
             });
 
             logger.log(message, {
