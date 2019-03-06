@@ -83,22 +83,24 @@ class SumoLogger {
     }
 
     batchReadyToSend() {
-        if (this.pendingLogs.length === 0) {
-            return false;
-        }
-
         if (this.config.batchSize === 0) {
-            return true;
+            return this.config.interval === 0;
         } else {
-            const pendingBatchSize = this.pendingLogs.reduce((acc, curr) => {
-                return acc + curr.length;
-            });
-            return pendingBatchSize > this.config.batchSize;
+            const pendingMessages = this.pendingLogs.reduce((acc, curr) => {
+                const log = JSON.parse(curr);
+                return acc + log.msg + '\n';
+            }, '');
+            const pendingBatchSize = pendingMessages.length;
+            const ready = pendingBatchSize >= this.config.batchSize;
+            if (ready) {
+                this.stopLogSending();
+            }
+            return ready;
         }
     }
 
     sendLogs() {
-        if (!this.batchReadyToSend()) {
+        if (this.pendingLogs .length === 0) {
             return false;
         }
 
