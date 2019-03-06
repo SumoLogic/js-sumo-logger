@@ -2,6 +2,7 @@ const axios = require('axios');
 const formatDate = require('./formatDate');
 
 const DEFAULT_INTERVAL = 0;
+const DEFAULT_BATCH = 0;
 const NOOP = () => {};
 
 function getUUID() {
@@ -45,7 +46,9 @@ class SumoLogger {
                 ? newConfig.returnPromise
                 : true,
             clientUrl: newConfig.clientUrl || '',
+            useIntervalOnly: newConfig.useIntervalOnly || false,
             interval: newConfig.interval || DEFAULT_INTERVAL,
+            batchSize: newConfig.batchSize || DEFAULT_BATCH,
             sourceName: newConfig.sourceName || '',
             hostName: newConfig.hostName || '',
             sourceCategory: newConfig.sourceCategory || '',
@@ -64,6 +67,12 @@ class SumoLogger {
         if (newConfig.returnPromise) {
             this.config.returnPromise = newConfig.returnPromise;
         }
+        if (newConfig.useIntervalOnly) {
+            this.config.useIntervalOnly;
+        }
+        if (newConfig.batchSize) {
+            this.config.batchSize = newConfig.batchSize;
+        }
         if (newConfig.interval) {
             this.config.interval = newConfig.interval;
             this.startLogSending();
@@ -73,8 +82,23 @@ class SumoLogger {
         }
     }
 
-    sendLogs() {
+    batchReadyToSend() {
         if (this.pendingLogs.length === 0) {
+            return false;
+        }
+
+        if (this.config.batchSize === 0) {
+            return true;
+        } else {
+            const pendingBatchSize = this.pendingLogs.reduce((acc, curr) => {
+                return acc + curr.length;
+            });
+            return pendingBatchSize > this.config.batchSize;
+        }
+    }
+
+    sendLogs() {
+        if (!this.batchReadyToSend()) {
             return false;
         }
 
@@ -119,6 +143,8 @@ class SumoLogger {
                 })
                 .then(() => {
                     this.pendingLogs = [];
+                    // Reset interval if needed:
+                    this.startLogSending();
                     this.config.onSuccess();
                 })
                 .catch((error) => {
@@ -249,7 +275,7 @@ class SumoLogger {
 
         this.pendingLogs = this.pendingLogs.concat(messages);
 
-        if (this.config.interval === 0) {
+        if (this.batchReadyToSend()) {
             return this.sendLogs();
         }
     }
