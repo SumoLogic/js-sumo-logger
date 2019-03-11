@@ -78,13 +78,17 @@ To send your logs, the script must know which HTTP Source to use. Pass this valu
 
 Default: TRUE. Causes `log()` to return a promise and ignore the `onSuccess` and `onError` handler options (if passed). ONLY works when logs are sent individually and not batched (`interval: 0`).
 
-*batchSize (optional)*
-
-An integer specifying total log length. This can be used by itself or in addition to `interval`. For higher volume applications, Sumo Logic recommends using between 100000 and 1000000 to optimize the tradeoff between network calls and load. If both `batchSize` and `interval` are configured, sending will be triggered when the pending logs list (aggregate message length) is reached or when the specified interval is hit and in either case the interval will be reset on send.
-
 *interval (optional)*
 
-A number of milliseconds. Messages will be batched and sent at the interval specified. Default value is zero, meaning messages are sent each time `log()` is called. If both `batchSize` and `interval` are configured, sending will be triggered when the pending logs list (aggregate message length) is reached or when the specified interval is hit and in either case the interval will be reset on send.
+A number of milliseconds. Messages will be batched and sent at the interval specified. Default value is zero, meaning messages are sent each time `log()` is called. If both `batchSize` and `interval` are configured sending will be triggered when the pending logs' aggregate message length is reached or when the specified interval is hit, and in either case the interval will be reset on send.
+
+*useIntervalOnly (optional)*
+
+Boolean. If enabled `batchSize` is ignored and only `interval` is used to trigger when the pending logs will be sent.
+
+*batchSize (optional)*
+
+An integer specifying total log length. This can be used by itself or in addition to `interval` but is ignored when `useIntervalOnly` is true. For higher volume applications, Sumo Logic recommends using between 100000 and 1000000 to optimize the tradeoff between network calls and load. If both `batchSize` and `interval` are configured sending will be triggered when the pending logs' aggregate message length is reached or when the specified interval is hit, and in either case the interval will be reset on send.
 
 *onSuccess (optional)*
 

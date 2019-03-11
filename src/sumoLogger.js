@@ -68,14 +68,14 @@ class SumoLogger {
             this.config.returnPromise = newConfig.returnPromise;
         }
         if (newConfig.useIntervalOnly) {
-            this.config.useIntervalOnly;
-        }
-        if (newConfig.batchSize) {
-            this.config.batchSize = newConfig.batchSize;
+            this.config.useIntervalOnly = newConfig.useIntervalOnly;
         }
         if (newConfig.interval) {
             this.config.interval = newConfig.interval;
             this.startLogSending();
+        }
+        if (newConfig.batchSize) {
+            this.config.batchSize = newConfig.batchSize;
         }
         if (newConfig.sourceCategory) {
             this.config.sourceCategory = newConfig.sourceCategory;
@@ -100,7 +100,7 @@ class SumoLogger {
     }
 
     sendLogs() {
-        if (this.pendingLogs .length === 0) {
+        if (this.pendingLogs.length === 0) {
             return false;
         }
 
@@ -277,7 +277,7 @@ class SumoLogger {
 
         this.pendingLogs = this.pendingLogs.concat(messages);
 
-        if (this.batchReadyToSend()) {
+        if (!this.config.useIntervalOnly && this.batchReadyToSend()) {
             return this.sendLogs();
         }
     }
