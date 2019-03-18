@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.2
+* Add `batchSize` configuration option
+
 ### v2.1.1
 * Removed obsolete Jasmine tests and links to Grunt
 

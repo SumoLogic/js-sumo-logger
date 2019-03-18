@@ -8,7 +8,7 @@ You must have created an HTTP source in your Sumo Logic account to use this SDK.
 
 All logs are sent as JSON objects by default. If you call `log()` with just a string, the string is included as a field called `msg`. If you call the function with a JSON object, each field in the object is included as a separate field. Fields called `sessionId`, `url`, and `timestamp` are sent in both cases.
 
-Messages are batched and sent at the configured interval; default is zero, meaning messages are sent to the server on each call. You can force any queued messages to be sent, typically during a shutdown or logout flow.
+Messages are batched and sent at the configured interval/batch size; default for both is zero, meaning messages are sent to the server on each call. You can force any queued messages to be sent, typically during a shutdown or logout flow.
 
 | Module Deprecation Notice |
 | --- |
@@ -80,7 +80,15 @@ Default: TRUE. Causes `log()` to return a promise and ignore the `onSuccess` and
 
 *interval (optional)*
 
-A number of milliseconds. Messages will be batched and sent at the interval specified. Default value is zero, meaning messages are sent each time `log()` is called.
+A number of milliseconds. Messages will be batched and sent at the interval specified. Default value is zero, meaning messages are sent each time `log()` is called. If both `batchSize` and `interval` are configured sending will be triggered when the pending logs' aggregate message length is reached or when the specified interval is hit, and in either case the interval will be reset on send.
+
+*useIntervalOnly (optional)*
+
+Boolean. If enabled `batchSize` is ignored and only `interval` is used to trigger when the pending logs will be sent.
+
+*batchSize (optional)*
+
+An integer specifying total log length. This can be used by itself or in addition to `interval` but is ignored when `useIntervalOnly` is true. For higher volume applications, Sumo Logic recommends using between 100000 and 1000000 to optimize the tradeoff between network calls and load. If both `batchSize` and `interval` are configured sending will be triggered when the pending logs' aggregate message length is reached or when the specified interval is hit, and in either case the interval will be reset on send.
 
 *onSuccess (optional)*
 
@@ -143,6 +151,7 @@ Override client URL set in the `config` call. (Node version only)
     endpoint: "https://us2-events.sumologic.com/receiver/v1/http/222loremipsumetc32FG",
     returnPromise: false,
     interval: 20000, // Send messages in batches every 20 seconds
+    batchSize: 100000 // Or when total log length reaches 100k characters
     sendErrors: true,
     sessionKey: 'Abc32df34rfg54gui8j098dv13sq5re', // generate a GUID
     sourceName: 'My Custom App',

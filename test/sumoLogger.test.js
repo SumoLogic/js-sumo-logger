@@ -267,6 +267,26 @@ describe('sumoLogger', () => {
             );
         });
 
+        it('should send logs when batchSize is reached', () => {
+            const logger = new SumoLogger({ endpoint, batchSize: 2000 });
+            const msgs = [];
+
+            for (let i=0; i < 10; i++) {
+                let msg = new Array(20).fill(`${message}0${i}`);
+                msgs.push(msg);
+            }
+
+            msgs.forEach((mess) => {
+                logger.log(mess, {
+                    timestamp,
+                    sessionKey
+                });
+            });
+
+            const isReady = logger.batchReadyToSend();
+            expect(isReady).to.equal(true);
+        });
+
         it('should hit the returnPromise promise then handler if the request succeeds', (done) => {
             axios.post.resolves({ status: 200 });
 
@@ -485,7 +505,8 @@ describe('sumoLogger', () => {
         it('should send any queued logs', () => {
             const logger = new SumoLogger({
                 endpoint,
-                interval: 10
+                interval: 10,
+                batchSize: 100000
             });
 
             logger.log(message);
