@@ -1,5 +1,9 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.2.1
+* [Bug fix](https://github.com/SumoLogic/js-sumo-logger/issues/65): Clear interval, if it exists, before setting new interval
+* [Bug fix](https://github.com/SumoLogic/js-sumo-logger/issues/66): Instead of emptying pending logs list, remove the logs which were successfully sent
+
 ### v2.2
 * Add `batchSize` configuration option
 
