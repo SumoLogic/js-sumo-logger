@@ -139,12 +139,13 @@ class SumoLogger {
                 );
             }
 
+            const logsToSend = Array.from(this.pendingLogs);
             return axios
-                .post(this.config.endpoint, this.pendingLogs.join('\n'), {
+                .post(this.config.endpoint, logsToSend.join('\n'), {
                     headers
                 })
                 .then(() => {
-                    this.pendingLogs = [];
+                    this.pendingLogs = this.pendingLogs.slice(logsToSend.length);
                     // Reset interval if needed:
                     this.startLogSending();
                     this.config.onSuccess();
@@ -160,6 +161,9 @@ class SumoLogger {
 
     startLogSending() {
         if (this.config.interval > 0) {
+            if (this.interval) {
+                this.stopLogSending();
+            }
             this.interval = setInterval(() => {
                 this.sendLogs();
             }, this.config.interval);
