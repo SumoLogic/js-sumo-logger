@@ -1,5 +1,5 @@
-const axios = require('axios');
-const formatDate = require('./formatDate');
+const axios = require("axios");
+const formatDate = require("./formatDate");
 
 const DEFAULT_INTERVAL = 0;
 const DEFAULT_BATCH = 0;
@@ -8,9 +8,9 @@ const NOOP = () => {};
 function getUUID() {
     // eslint gets funny about bitwise
     /* eslint-disable */
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c => {
         const piece = (Math.random() * 16) | 0;
-        const elem = c === 'x' ? piece : (piece & 0x3) | 0x8;
+        const elem = c === "x" ? piece : (piece & 0x3) | 0x8;
         return elem.toString(16);
     });
     /* eslint-enable */
@@ -20,11 +20,11 @@ class SumoLogger {
     constructor(options) {
         if (
             !options ||
-            !Object.prototype.hasOwnProperty.call(options, 'endpoint') ||
+            !Object.prototype.hasOwnProperty.call(options, "endpoint") ||
             options.endpoint === undefined ||
-            options.endpoint === ''
+            options.endpoint === ""
         ) {
-            console.error('An endpoint value must be provided');
+            console.error("An endpoint value must be provided");
             return;
         }
 
@@ -41,17 +41,17 @@ class SumoLogger {
             endpoint: newConfig.endpoint,
             returnPromise: Object.prototype.hasOwnProperty.call(
                 newConfig,
-                'returnPromise'
+                "returnPromise"
             )
                 ? newConfig.returnPromise
                 : true,
-            clientUrl: newConfig.clientUrl || '',
+            clientUrl: newConfig.clientUrl || "",
             useIntervalOnly: newConfig.useIntervalOnly || false,
             interval: newConfig.interval || DEFAULT_INTERVAL,
             batchSize: newConfig.batchSize || DEFAULT_BATCH,
-            sourceName: newConfig.sourceName || '',
-            hostName: newConfig.hostName || '',
-            sourceCategory: newConfig.sourceCategory || '',
+            sourceName: newConfig.sourceName || "",
+            hostName: newConfig.hostName || "",
+            sourceCategory: newConfig.sourceCategory || "",
             session: newConfig.sessionKey || getUUID(),
             onSuccess: newConfig.onSuccess || NOOP,
             onError: newConfig.onError || NOOP,
@@ -88,8 +88,8 @@ class SumoLogger {
         } else {
             const pendingMessages = this.pendingLogs.reduce((acc, curr) => {
                 const log = JSON.parse(curr);
-                return acc + log.msg + '\n';
-            }, '');
+                return acc + log.msg + "\n";
+            }, "");
             const pendingBatchSize = pendingMessages.length;
             const ready = pendingBatchSize >= this.config.batchSize;
             if (ready) {
@@ -106,33 +106,33 @@ class SumoLogger {
 
         try {
             const headers = {
-                'X-Sumo-Client': 'sumo-javascript-sdk'
+                "X-Sumo-Client": "sumo-javascript-sdk"
             };
             if (this.config.graphite) {
                 Object.assign(headers, {
-                    'Content-Type': 'application/vnd.sumologic.graphite'
+                    "Content-Type": "application/vnd.sumologic.graphite"
                 });
             } else {
-                Object.assign(headers, { 'Content-Type': 'application/json' });
+                Object.assign(headers, { "Content-Type": "application/json" });
             }
-            if (this.config.sourceName !== '') {
+            if (this.config.sourceName !== "") {
                 Object.assign(headers, {
-                    'X-Sumo-Name': this.config.sourceName
+                    "X-Sumo-Name": this.config.sourceName
                 });
             }
-            if (this.config.sourceCategory !== '') {
+            if (this.config.sourceCategory !== "") {
                 Object.assign(headers, {
-                    'X-Sumo-Category': this.config.sourceCategory
+                    "X-Sumo-Category": this.config.sourceCategory
                 });
             }
-            if (this.config.hostName !== '') {
-                Object.assign(headers, { 'X-Sumo-Host': this.config.hostName });
+            if (this.config.hostName !== "") {
+                Object.assign(headers, { "X-Sumo-Host": this.config.hostName });
             }
 
             if (this.config.returnPromise && this.pendingLogs.length === 1) {
                 return axios.post(
                     this.config.endpoint,
-                    this.pendingLogs.join('\n'),
+                    this.pendingLogs.join("\n"),
                     {
                         headers
                     }
@@ -141,16 +141,18 @@ class SumoLogger {
 
             const logsToSend = Array.from(this.pendingLogs);
             return axios
-                .post(this.config.endpoint, logsToSend.join('\n'), {
+                .post(this.config.endpoint, logsToSend.join("\n"), {
                     headers
                 })
                 .then(() => {
-                    this.pendingLogs = this.pendingLogs.slice(logsToSend.length);
+                    this.pendingLogs = this.pendingLogs.slice(
+                        logsToSend.length
+                    );
                     // Reset interval if needed:
                     this.startLogSending();
                     this.config.onSuccess();
                 })
-                .catch((error) => {
+                .catch(error => {
                     this.config.onError(error);
                 });
         } catch (ex) {
@@ -186,7 +188,7 @@ class SumoLogger {
         let message = msg;
 
         if (!message) {
-            console.error('A value must be provided');
+            console.error("A value must be provided");
             return false;
         }
 
@@ -194,15 +196,15 @@ class SumoLogger {
         const testEl = isArray ? message[0] : message;
         const type = typeof testEl;
 
-        if (type === 'undefined') {
-            console.error('A value must be provided');
+        if (type === "undefined") {
+            console.error("A value must be provided");
             return false;
         }
 
         if (
             this.config.graphite &&
-            (!Object.prototype.hasOwnProperty.call(testEl, 'path') ||
-                !Object.prototype.hasOwnProperty.call(testEl, 'value'))
+            (!Object.prototype.hasOwnProperty.call(testEl, "path") ||
+                !Object.prototype.hasOwnProperty.call(testEl, "value"))
         ) {
             console.error(
                 'Both "path" and "value" properties must be provided in the message object to send Graphite metrics'
@@ -210,9 +212,9 @@ class SumoLogger {
             return false;
         }
 
-        if (type === 'object') {
+        if (type === "object") {
             if (Object.keys(message).length === 0) {
-                console.error('A non-empty JSON object must be provided');
+                console.error("A non-empty JSON object must be provided");
                 return false;
             }
         }
@@ -229,7 +231,7 @@ class SumoLogger {
             if (
                 Object.prototype.hasOwnProperty.call(
                     optionalConfig,
-                    'sessionKey'
+                    "sessionKey"
                 )
             ) {
                 sessKey = optionalConfig.sessionKey;
@@ -238,20 +240,20 @@ class SumoLogger {
             if (
                 Object.prototype.hasOwnProperty.call(
                     optionalConfig,
-                    'timestamp'
+                    "timestamp"
                 )
             ) {
                 ts = optionalConfig.timestamp;
             }
 
-            if (Object.prototype.hasOwnProperty.call(optionalConfig, 'url')) {
+            if (Object.prototype.hasOwnProperty.call(optionalConfig, "url")) {
                 client.url = optionalConfig.url;
             }
         }
 
         const timestamp = formatDate(ts);
 
-        const messages = message.map((item) => {
+        const messages = message.map(item => {
             if (this.config.graphite) {
                 return `${item.path} ${item.value} ${Math.round(
                     ts.getTime() / 1000
@@ -260,7 +262,7 @@ class SumoLogger {
             if (this.config.raw) {
                 return item;
             }
-            if (typeof item === 'string') {
+            if (typeof item === "string") {
                 return JSON.stringify(
                     Object.assign(
                         {
