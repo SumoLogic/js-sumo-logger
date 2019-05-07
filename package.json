@@ -11,6 +11,11 @@
     "build": "babel -d lib src",
     "prepublishOnly": "npm run build"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
   "dependencies": {
     "axios": "^0.18.0"
   },
@@ -23,9 +28,12 @@
     "eslint": "^5.15.1",
     "eslint-plugin-node": "^8.0.1",
     "gulp-babel": "^8.0.0",
-    "mocha": "^6.0.0",
+    "husky": "^2.2.0",
+    "mocha": "^6.1.4",
     "np": "^4.0.2",
-    "nyc": "^13.3.0",
+    "nyc": "^14.1.0",
+    "prettier": "1.17.0",
+    "pretty-quick": "^1.10.0",
     "sinon": "^7.2.4",
     "sinon-chai": "^3.3.0"
   },
