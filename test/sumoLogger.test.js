@@ -15,8 +15,7 @@ const sandbox = sinon.createSandbox();
 
 describe('sumoLogger', () => {
     beforeEach(() => {
-        sandbox.stub(axios, 'post')
-            .returns(new Promise(resolve => resolve()));
+        sandbox.stub(axios, 'post').returns(new Promise(resolve => resolve()));
         sandbox.spy(console, 'error');
     });
 
@@ -43,26 +42,25 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(axios.post).to.have.been.calledWithExactly(
-                endpoint,
-                body,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Sumo-Client': 'sumo-javascript-sdk'
-                    }
+            expect(axios.post).to.have.been.calledWithExactly(endpoint, body, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Sumo-Client': 'sumo-javascript-sdk'
                 }
-            );
+            });
         });
 
         it('should send a message object', () => {
             const logger = new SumoLogger({ endpoint });
 
-            logger.log({ key: 'value' }, {
-                timestamp,
-                sessionKey,
-                url: 'url'
-            });
+            logger.log(
+                { key: 'value' },
+                {
+                    timestamp,
+                    sessionKey,
+                    url: 'url'
+                }
+            );
 
             const body = JSON.stringify({
                 sessionId: sessionKey,
@@ -71,16 +69,12 @@ describe('sumoLogger', () => {
                 key: 'value'
             });
 
-            expect(axios.post).to.have.been.calledWithMatch(
-                endpoint,
-                body,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Sumo-Client': 'sumo-javascript-sdk'
-                    }
+            expect(axios.post).to.have.been.calledWithMatch(endpoint, body, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Sumo-Client': 'sumo-javascript-sdk'
                 }
-            );
+            });
         });
 
         it('should send a message array', () => {
@@ -98,16 +92,12 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(axios.post).to.have.been.calledWithMatch(
-                endpoint,
-                body,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Sumo-Client': 'sumo-javascript-sdk'
-                    }
+            expect(axios.post).to.have.been.calledWithMatch(endpoint, body, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Sumo-Client': 'sumo-javascript-sdk'
                 }
-            );
+            });
         });
 
         it('should extend headers if they exist in the config', () => {
@@ -134,18 +124,14 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(axios.post).to.have.been.calledWithMatch(
-                endpoint,
-                body,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Sumo-Name': sourceName,
-                        'X-Sumo-Category': sourceCategory,
-                        'X-Sumo-Host': hostName
-                    }
+            expect(axios.post).to.have.been.calledWithMatch(endpoint, body, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Sumo-Name': sourceName,
+                    'X-Sumo-Category': sourceCategory,
+                    'X-Sumo-Host': hostName
                 }
-            );
+            });
         });
 
         it('should set the graphite header if graphite enabled', () => {
@@ -167,7 +153,9 @@ describe('sumoLogger', () => {
 
             expect(axios.post).to.have.been.calledWithMatch(
                 endpoint,
-                `graphite.metric.path 100 ${Math.round(timestamp.getTime() / 1000)}`,
+                `graphite.metric.path 100 ${Math.round(
+                    timestamp.getTime() / 1000
+                )}`,
                 {
                     headers: {
                         'Content-Type': 'application/vnd.sumologic.graphite'
@@ -183,10 +171,13 @@ describe('sumoLogger', () => {
             });
             const expectedTimestamp = Math.round(timestamp / 1000);
 
-            logger.log({
-                path: 'graphite.metric.path',
-                value: 100
-            }, { timestamp });
+            logger.log(
+                {
+                    path: 'graphite.metric.path',
+                    value: 100
+                },
+                { timestamp }
+            );
 
             expect(axios.post).to.have.been.calledWithMatch(
                 endpoint,
@@ -234,15 +225,12 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(axios.post).to.have.been.calledWithMatch(
-                endpoint,
-                message, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Sumo-Client': 'sumo-javascript-sdk'
-                    }
+            expect(axios.post).to.have.been.calledWithMatch(endpoint, message, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Sumo-Client': 'sumo-javascript-sdk'
                 }
-            );
+            });
         });
 
         it('should send an array of log messages exactly as provided if raw option enabled', () => {
@@ -256,27 +244,24 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(axios.post).to.have.been.calledWithMatch(
-                endpoint,
-                message, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Sumo-Client': 'sumo-javascript-sdk'
-                    }
+            expect(axios.post).to.have.been.calledWithMatch(endpoint, message, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Sumo-Client': 'sumo-javascript-sdk'
                 }
-            );
+            });
         });
 
         it('should send logs when batchSize is reached', () => {
             const logger = new SumoLogger({ endpoint, batchSize: 2000 });
             const msgs = [];
 
-            for (let i=0; i < 10; i++) {
+            for (let i = 0; i < 10; i++) {
                 let msg = new Array(20).fill(`${message}0${i}`);
                 msgs.push(msg);
             }
 
-            msgs.forEach((mess) => {
+            msgs.forEach(mess => {
                 logger.log(mess, {
                     timestamp,
                     sessionKey
@@ -287,7 +272,7 @@ describe('sumoLogger', () => {
             expect(isReady).to.equal(true);
         });
 
-        it('should hit the returnPromise promise then handler if the request succeeds', (done) => {
+        it('should hit the returnPromise promise then handler if the request succeeds', done => {
             axios.post.resolves({ status: 200 });
 
             const logger = new SumoLogger({
@@ -305,7 +290,7 @@ describe('sumoLogger', () => {
             }, 10);
         });
 
-        it('should hit the returnPromise promise catch handler if the request fails', (done) => {
+        it('should hit the returnPromise promise catch handler if the request fails', done => {
             const error = new Error('unavailable');
             axios.post.rejects(error);
 
@@ -316,7 +301,7 @@ describe('sumoLogger', () => {
             const prom = logger.log(message);
             prom.then(() => {
                 onPromiseReturnSpy();
-            }).catch((ex) => {
+            }).catch(ex => {
                 onErrorSpy(ex);
             });
 
@@ -326,7 +311,7 @@ describe('sumoLogger', () => {
             }, 10);
         });
 
-        it('should call the onSuccess callback if the request succeeds and returnPromise is false', (done) => {
+        it('should call the onSuccess callback if the request succeeds and returnPromise is false', done => {
             axios.post.resolves({ status: 200 });
 
             const logger = new SumoLogger({
@@ -343,7 +328,7 @@ describe('sumoLogger', () => {
             }, 10);
         });
 
-        it('should call the onError callback if an error object is returned and returnPromise is falsed', (done) => {
+        it('should call the onError callback if an error object is returned and returnPromise is falsed', done => {
             const error = new Error('unavailable');
             axios.post.rejects(error);
 
@@ -361,7 +346,7 @@ describe('sumoLogger', () => {
             }, 10);
         });
 
-        it('should pass the entire error object if an unexpected error is encountered', (done) => {
+        it('should pass the entire error object if an unexpected error is encountered', done => {
             const error = new Error('Unexpected Error');
 
             axios.post.throws(error);
@@ -381,7 +366,7 @@ describe('sumoLogger', () => {
     });
 
     describe('updateConfig()', () => {
-        it('should update the instance config with the new values', (done) => {
+        it('should update the instance config with the new values', done => {
             const logger = new SumoLogger({ endpoint });
 
             const body = JSON.stringify({
@@ -437,16 +422,12 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(axios.post).to.have.been.calledWithMatch(
-                endpoint,
-                body,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Sumo-Client': 'sumo-javascript-sdk'
-                    }
+            expect(axios.post).to.have.been.calledWithMatch(endpoint, body, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Sumo-Client': 'sumo-javascript-sdk'
                 }
-            );
+            });
         });
 
         it('should not update config if no values are not provided', () => {
@@ -466,21 +447,17 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(axios.post).to.have.been.calledWithMatch(
-                endpoint,
-                body,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Sumo-Client': 'sumo-javascript-sdk'
-                    }
+            expect(axios.post).to.have.been.calledWithMatch(endpoint, body, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Sumo-Client': 'sumo-javascript-sdk'
                 }
-            );
+            });
         });
     });
 
     describe('emptyLogQueue()', () => {
-        it('should not send request if log queue has been cleared', (done) => {
+        it('should not send request if log queue has been cleared', done => {
             const logger = new SumoLogger({
                 endpoint,
                 interval: 10
@@ -525,43 +502,57 @@ describe('sumoLogger', () => {
         it('no options', () => {
             const logger = new SumoLogger();
             logger.log();
-            expect(console.error).to.have.been.calledWith('An endpoint value must be provided');
+            expect(console.error).to.have.been.calledWith(
+                'An endpoint value must be provided'
+            );
         });
 
         it('no options endpoint property', () => {
             const logger = new SumoLogger({});
             logger.log();
-            expect(console.error).to.have.been.calledWith('An endpoint value must be provided');
+            expect(console.error).to.have.been.calledWith(
+                'An endpoint value must be provided'
+            );
         });
 
         it('undefined options endpoint property', () => {
             const logger = new SumoLogger({ endpoint: undefined });
             logger.log();
-            expect(console.error).to.have.been.calledWith('An endpoint value must be provided');
+            expect(console.error).to.have.been.calledWith(
+                'An endpoint value must be provided'
+            );
         });
 
         it('empty options endpoint property', () => {
             const logger = new SumoLogger({ endpoint: '' });
             logger.log();
-            expect(console.error).to.have.been.calledWith('An endpoint value must be provided');
+            expect(console.error).to.have.been.calledWith(
+                'An endpoint value must be provided'
+            );
         });
 
         it('no message passed to log', () => {
             const logger = new SumoLogger({ endpoint });
             logger.log();
-            expect(console.error).to.have.been.calledWith('A value must be provided');
+            expect(console.error).to.have.been.calledWith(
+                'A value must be provided'
+            );
         });
 
         it('empty message array passed to log', () => {
             const logger = new SumoLogger({ endpoint });
             logger.log([]);
-            expect(console.error).to.have.been.calledWith('A value must be provided');
+            expect(console.error).to.have.been.calledWith(
+                'A value must be provided'
+            );
         });
 
         it('empty message object passed to log', () => {
             const logger = new SumoLogger({ endpoint });
             logger.log({});
-            expect(console.error).to.have.been.calledWith('A non-empty JSON object must be provided');
+            expect(console.error).to.have.been.calledWith(
+                'A non-empty JSON object must be provided'
+            );
         });
 
         it('required graphite message properties not provided', () => {
@@ -572,14 +563,16 @@ describe('sumoLogger', () => {
             logger.log({
                 incorrect: 'value'
             });
-            expect(console.error).to.have.been.calledWith('Both "path" and "value" properties must be provided in the message object to send Graphite metrics');
+            expect(console.error).to.have.been.calledWith(
+                'Both "path" and "value" properties must be provided in the message object to send Graphite metrics'
+            );
         });
 
         it('should not not throw an error if falsy parameters are provided', () => {
             const logger = new SumoLogger({
                 endpoint,
                 graphite: true
-            })
+            });
             logger.log({
                 path: '/this/is/a/path',
                 value: 0
