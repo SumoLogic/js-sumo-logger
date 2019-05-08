@@ -8,7 +8,7 @@
     "test": "nyc mocha --exit",
     "cover": "nyc --reporter=lcov npm test",
     "lint": "eslint src/sumoLogger.js src/formatDate.js test/**/*.js",
-    "fix-code": "prettier-eslint --write 'src/**/*.js' test/**/*.js",
+    "fix-code": "prettier-eslint --write src/sumoLogger.js src/formatDate.js test/**/*.js",
     "build": "babel -d lib src",
     "prepublishOnly": "npm run build"
   },
