@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.4.0
+* Add prettier-eslint to repo for consistent code formatting
+
 ### v2.3.1
 * Fix release notes for versioning
 

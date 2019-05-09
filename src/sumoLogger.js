@@ -8,7 +8,7 @@ const NOOP = () => {};
 function getUUID() {
     // eslint gets funny about bitwise
     /* eslint-disable */
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
         const piece = (Math.random() * 16) | 0;
         const elem = c === 'x' ? piece : (piece & 0x3) | 0x8;
         return elem.toString(16);
@@ -145,12 +145,14 @@ class SumoLogger {
                     headers
                 })
                 .then(() => {
-                    this.pendingLogs = this.pendingLogs.slice(logsToSend.length);
+                    this.pendingLogs = this.pendingLogs.slice(
+                        logsToSend.length
+                    );
                     // Reset interval if needed:
                     this.startLogSending();
                     this.config.onSuccess();
                 })
-                .catch((error) => {
+                .catch(error => {
                     this.config.onError(error);
                 });
         } catch (ex) {
@@ -251,7 +253,7 @@ class SumoLogger {
 
         const timestamp = formatDate(ts);
 
-        const messages = message.map((item) => {
+        const messages = message.map(item => {
             if (this.config.graphite) {
                 return `${item.path} ${item.value} ${Math.round(
                     ts.getTime() / 1000
