@@ -100,9 +100,7 @@ class SumoLogger {
     }
 
     _postSuccess(logsSentLength) {
-        this.pendingLogs = this.pendingLogs.slice(
-            logsSentLength
-        );
+        this.pendingLogs = this.pendingLogs.slice(logsSentLength);
         // Reset interval if needed:
         this.startLogSending();
         this.config.onSuccess();
@@ -139,17 +137,15 @@ class SumoLogger {
             }
 
             if (this.config.returnPromise && this.pendingLogs.length === 1) {
-                return axios.post(
-                    this.config.endpoint,
-                    this.pendingLogs.join('\n'),
-                    {
+                return axios
+                    .post(this.config.endpoint, this.pendingLogs.join('\n'), {
                         headers
-                    }
-                ).then(() => this._postSuccess(1))
-                .catch(error => {
-                    this.config.onError(error);
-                    return Promise.reject(error);
-                });
+                    })
+                    .then(() => this._postSuccess(1))
+                    .catch(error => {
+                        this.config.onError(error);
+                        return Promise.reject(error);
+                    });
             }
 
             const logsToSend = Array.from(this.pendingLogs);
