@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.4.3
+* NPM update and audit fixes
+
 ### v2.4.2
 * Update repository URL in package.json
 
