@@ -34,7 +34,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:SumoLogic/js-sumo-logger.git"
+    "url": "git@github.com:SumoLogic/js-logging-sdk.git"
   },
   "keywords": [
     "sumo-logger",
