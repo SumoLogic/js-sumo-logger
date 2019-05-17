@@ -99,6 +99,13 @@ class SumoLogger {
         }
     }
 
+    _postSuccess(logsSentLength) {
+        this.pendingLogs = this.pendingLogs.slice(logsSentLength);
+        // Reset interval if needed:
+        this.startLogSending();
+        this.config.onSuccess();
+    }
+
     sendLogs() {
         if (this.pendingLogs.length === 0) {
             return false;
@@ -130,13 +137,15 @@ class SumoLogger {
             }
 
             if (this.config.returnPromise && this.pendingLogs.length === 1) {
-                return axios.post(
-                    this.config.endpoint,
-                    this.pendingLogs.join('\n'),
-                    {
+                return axios
+                    .post(this.config.endpoint, this.pendingLogs.join('\n'), {
                         headers
-                    }
-                );
+                    })
+                    .then(() => this._postSuccess(1))
+                    .catch(error => {
+                        this.config.onError(error);
+                        return Promise.reject(error);
+                    });
             }
 
             const logsToSend = Array.from(this.pendingLogs);
@@ -144,16 +153,12 @@ class SumoLogger {
                 .post(this.config.endpoint, logsToSend.join('\n'), {
                     headers
                 })
-                .then(() => {
-                    this.pendingLogs = this.pendingLogs.slice(
-                        logsToSend.length
-                    );
-                    // Reset interval if needed:
-                    this.startLogSending();
-                    this.config.onSuccess();
-                })
+                .then(() => this._postSuccess(logsToSend.length))
                 .catch(error => {
                     this.config.onError(error);
+                    if (this.config.returnPromise) {
+                        return Promise.reject(error);
+                    }
                 });
         } catch (ex) {
             this.config.onError(ex);
