@@ -141,7 +141,10 @@ class SumoLogger {
                     .post(this.config.endpoint, this.pendingLogs.join('\n'), {
                         headers
                     })
-                    .then(res => this._postSuccess(1), res)
+                    .then(res => {
+                        this._postSuccess(1);
+                        return res;
+                    })
                     .catch(error => {
                         this.config.onError(error);
                         return Promise.reject(error);
