@@ -1,5 +1,14 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.4.3
+* NPM update and audit fixes
+
+### v2.4.2
+* Update repository URL in package.json
+
+### v2.4.1
+* Add `.then/.catch` blocks for single log send closure
+
 ### v2.4.0
 * Add prettier-eslint to repo for consistent code formatting
 

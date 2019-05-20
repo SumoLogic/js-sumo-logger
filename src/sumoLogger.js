@@ -115,6 +115,13 @@ class SumoLogger {
         }
     }
 
+    _postSuccess(logsSentLength) {
+        this.pendingLogs = this.pendingLogs.slice(logsSentLength);
+        // Reset interval if needed:
+        this.startLogSending();
+        this.config.onSuccess();
+    }
+
     sendLogs() {
         if (this.pendingLogs.length === 0) {
             return false;
@@ -150,7 +157,15 @@ class SumoLogger {
                     .post(this.config.endpoint)
                     .set(headers)
                     .send(this.pendingLogs.join('\n'))
-                    .then(marshalHttpResponse);
+                    .then(marshalHttpResponse)
+                    .then(res => {
+                        this._postSuccess(1);
+                        return res;
+                    })
+                    .catch(error => {
+                        this.config.onError(error);
+                        return Promise.reject(error);
+                    });
             }
 
             const logsToSend = Array.from(this.pendingLogs);
@@ -159,16 +174,12 @@ class SumoLogger {
                 .set(headers)
                 .send(logsToSend.join('\n'))
                 .then(marshalHttpResponse)
-                .then(() => {
-                    this.pendingLogs = this.pendingLogs.slice(
-                        logsToSend.length
-                    );
-                    // Reset interval if needed:
-                    this.startLogSending();
-                    this.config.onSuccess();
-                })
+                .then(() => this._postSuccess(logsToSend.length))
                 .catch(error => {
                     this.config.onError(error);
+                    if (this.config.returnPromise) {
+                        return Promise.reject(error);
+                    }
                 });
         } catch (ex) {
             this.config.onError(ex);
