@@ -1,7 +1,9 @@
-const axios = require('axios');
+const superagent = require('superagent');
 const SumoLogger = require('../src/sumoLogger');
 const formatDate = require('../src/formatDate');
 
+let superagentSetStub = sinon.stub();
+let superagentSendStub = sinon.stub();
 const onSuccessSpy = sinon.spy();
 const onErrorSpy = sinon.spy();
 const onPromiseReturnSpy = sinon.spy();
@@ -15,11 +17,23 @@ const sandbox = sinon.createSandbox();
 
 describe('sumoLogger', () => {
     beforeEach(() => {
-        sandbox.stub(axios, 'post').returns(new Promise(resolve => resolve()));
+        sandbox.stub(superagent, 'post').returns({
+            set: superagentSetStub.returnsThis(),
+            send: superagentSendStub.returns(
+                Promise.resolve({
+                    body: '',
+                    status: 200,
+                    res: { statusMessage: '' },
+                    xhr: {}
+                })
+            )
+        });
         sandbox.spy(console, 'error');
     });
 
     afterEach(() => {
+        superagentSetStub.resetHistory();
+        superagentSendStub.resetHistory();
         onSuccessSpy.resetHistory();
         onErrorSpy.resetHistory();
         onPromiseReturnSpy.resetHistory();
@@ -42,12 +56,12 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(axios.post).to.have.been.calledWithExactly(endpoint, body, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Sumo-Client': 'sumo-javascript-sdk'
-                }
+            expect(superagent.post).to.have.been.calledWithExactly(endpoint);
+            expect(superagentSetStub).to.have.been.calledWithExactly({
+                'Content-Type': 'application/json',
+                'X-Sumo-Client': 'sumo-javascript-sdk'
             });
+            expect(superagentSendStub).to.have.been.calledWithExactly(body);
         });
 
         it('should send a message object', () => {
@@ -69,12 +83,12 @@ describe('sumoLogger', () => {
                 key: 'value'
             });
 
-            expect(axios.post).to.have.been.calledWithMatch(endpoint, body, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Sumo-Client': 'sumo-javascript-sdk'
-                }
+            expect(superagent.post).to.have.been.calledWithMatch(endpoint);
+            expect(superagentSetStub).to.have.been.calledWithMatch({
+                'Content-Type': 'application/json',
+                'X-Sumo-Client': 'sumo-javascript-sdk'
             });
+            expect(superagentSendStub).to.have.been.calledWithMatch(body);
         });
 
         it('should send a message array', () => {
@@ -92,12 +106,12 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(axios.post).to.have.been.calledWithMatch(endpoint, body, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Sumo-Client': 'sumo-javascript-sdk'
-                }
+            expect(superagent.post).to.have.been.calledWithMatch(endpoint);
+            expect(superagentSetStub).to.have.been.calledWithMatch({
+                'Content-Type': 'application/json',
+                'X-Sumo-Client': 'sumo-javascript-sdk'
             });
+            expect(superagentSendStub).to.have.been.calledWithMatch(body);
         });
 
         it('should extend headers if they exist in the config', () => {
@@ -124,14 +138,14 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(axios.post).to.have.been.calledWithMatch(endpoint, body, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Sumo-Name': sourceName,
-                    'X-Sumo-Category': sourceCategory,
-                    'X-Sumo-Host': hostName
-                }
+            expect(superagent.post).to.have.been.calledWithMatch(endpoint);
+            expect(superagentSetStub).to.have.been.calledWithMatch({
+                'Content-Type': 'application/json',
+                'X-Sumo-Name': sourceName,
+                'X-Sumo-Category': sourceCategory,
+                'X-Sumo-Host': hostName
             });
+            expect(superagentSendStub).to.have.been.calledWithMatch(body);
         });
 
         it('should set the graphite header if graphite enabled', () => {
@@ -151,16 +165,14 @@ describe('sumoLogger', () => {
                 }
             );
 
-            expect(axios.post).to.have.been.calledWithMatch(
-                endpoint,
+            expect(superagent.post).to.have.been.calledWithMatch(endpoint);
+            expect(superagentSetStub).to.have.been.calledWithMatch({
+                'Content-Type': 'application/vnd.sumologic.graphite'
+            });
+            expect(superagentSendStub).to.have.been.calledWithMatch(
                 `graphite.metric.path 100 ${Math.round(
                     timestamp.getTime() / 1000
-                )}`,
-                {
-                    headers: {
-                        'Content-Type': 'application/vnd.sumologic.graphite'
-                    }
-                }
+                )}`
             );
         });
 
@@ -179,8 +191,8 @@ describe('sumoLogger', () => {
                 { timestamp }
             );
 
-            expect(axios.post).to.have.been.calledWithMatch(
-                endpoint,
+            expect(superagent.post).to.have.been.calledWithMatch(endpoint);
+            expect(superagentSendStub).to.have.been.calledWithMatch(
                 `graphite.metric.path 100 ${expectedTimestamp}`
             );
         });
@@ -208,8 +220,8 @@ describe('sumoLogger', () => {
                 }
             );
 
-            expect(axios.post).to.have.been.calledWithMatch(
-                endpoint,
+            expect(superagent.post).to.have.been.calledWithMatch(endpoint);
+            expect(superagentSendStub).to.have.been.calledWithMatch(
                 `graphite.metric.path 100 ${expectedTimestamp}\nanother.graphite.metric.path 50 ${expectedTimestamp}`
             );
         });
@@ -225,12 +237,12 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(axios.post).to.have.been.calledWithMatch(endpoint, message, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Sumo-Client': 'sumo-javascript-sdk'
-                }
+            expect(superagent.post).to.have.been.calledWithMatch(endpoint);
+            expect(superagentSetStub).to.have.been.calledWithMatch({
+                'Content-Type': 'application/json',
+                'X-Sumo-Client': 'sumo-javascript-sdk'
             });
+            expect(superagentSendStub).to.have.been.calledWithMatch(message);
         });
 
         it('should send an array of log messages exactly as provided if raw option enabled', () => {
@@ -244,12 +256,12 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(axios.post).to.have.been.calledWithMatch(endpoint, message, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Sumo-Client': 'sumo-javascript-sdk'
-                }
+            expect(superagent.post).to.have.been.calledWithMatch(endpoint);
+            expect(superagentSetStub).to.have.been.calledWithMatch({
+                'Content-Type': 'application/json',
+                'X-Sumo-Client': 'sumo-javascript-sdk'
             });
+            expect(superagentSendStub).to.have.been.calledWithMatch(message);
         });
 
         it('should send logs when batchSize is reached', () => {
@@ -273,8 +285,6 @@ describe('sumoLogger', () => {
         });
 
         it('should hit the returnPromise promise then handler if the request succeeds', done => {
-            axios.post.resolves({ status: 200 });
-
             const logger = new SumoLogger({
                 endpoint
             });
@@ -292,7 +302,7 @@ describe('sumoLogger', () => {
 
         it('should hit the returnPromise promise catch handler if the request fails', done => {
             const error = new Error('unavailable');
-            axios.post.rejects(error);
+            superagentSendStub.rejects(error);
 
             const logger = new SumoLogger({
                 endpoint
@@ -312,8 +322,6 @@ describe('sumoLogger', () => {
         });
 
         it('should call the onSuccess callback if the request succeeds and returnPromise is false', done => {
-            axios.post.resolves({ status: 200 });
-
             const logger = new SumoLogger({
                 endpoint,
                 returnPromise: false,
@@ -330,7 +338,7 @@ describe('sumoLogger', () => {
 
         it('should call the onError callback if an error object is returned and returnPromise is falsed', done => {
             const error = new Error('unavailable');
-            axios.post.rejects(error);
+            superagentSendStub.rejects(error);
 
             const logger = new SumoLogger({
                 endpoint,
@@ -349,7 +357,7 @@ describe('sumoLogger', () => {
         it('should pass the entire error object if an unexpected error is encountered', done => {
             const error = new Error('Unexpected Error');
 
-            axios.post.throws(error);
+            superagentSendStub.throws(error);
 
             const logger = new SumoLogger({
                 endpoint,
@@ -388,16 +396,14 @@ describe('sumoLogger', () => {
             });
 
             setTimeout(() => {
-                expect(axios.post).to.have.been.calledWithMatch(
-                    'newendpoint',
-                    body,
-                    {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Sumo-Category': 'newSourceCategory'
-                        }
-                    }
+                expect(superagent.post).to.have.been.calledWithMatch(
+                    'newendpoint'
                 );
+                expect(superagentSetStub).to.have.been.calledWithMatch({
+                    'Content-Type': 'application/json',
+                    'X-Sumo-Category': 'newSourceCategory'
+                });
+                expect(superagentSendStub).to.have.been.calledWithMatch(body);
                 logger.stopLogSending();
                 done();
             }, 20);
@@ -422,12 +428,12 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(axios.post).to.have.been.calledWithMatch(endpoint, body, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Sumo-Client': 'sumo-javascript-sdk'
-                }
+            expect(superagent.post).to.have.been.calledWithMatch(endpoint);
+            expect(superagentSetStub).to.have.been.calledWithMatch({
+                'Content-Type': 'application/json',
+                'X-Sumo-Client': 'sumo-javascript-sdk'
             });
+            expect(superagentSendStub).to.have.been.calledWithMatch(body);
         });
 
         it('should not update config if no values are not provided', () => {
@@ -447,12 +453,12 @@ describe('sumoLogger', () => {
                 sessionKey
             });
 
-            expect(axios.post).to.have.been.calledWithMatch(endpoint, body, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Sumo-Client': 'sumo-javascript-sdk'
-                }
+            expect(superagent.post).to.have.been.calledWithMatch(endpoint);
+            expect(superagentSetStub).to.have.been.calledWithMatch({
+                'Content-Type': 'application/json',
+                'X-Sumo-Client': 'sumo-javascript-sdk'
             });
+            expect(superagentSendStub).to.have.been.calledWithMatch(body);
         });
     });
 
@@ -472,7 +478,7 @@ describe('sumoLogger', () => {
 
             setTimeout(() => {
                 logger.stopLogSending();
-                expect(axios.post).to.not.have.been.called;
+                expect(superagent.post).to.not.have.been.called;
                 done();
             }, 20);
         });
@@ -488,11 +494,11 @@ describe('sumoLogger', () => {
 
             logger.log(message);
 
-            expect(axios.post).to.not.have.been.called;
+            expect(superagent.post).to.not.have.been.called;
 
             logger.flushLogs();
 
-            expect(axios.post).to.have.been.calledOnce;
+            expect(superagent.post).to.have.been.calledOnce;
 
             logger.stopLogSending();
         });

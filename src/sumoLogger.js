@@ -1,4 +1,4 @@
-const axios = require('axios');
+const superagent = require('superagent');
 const formatDate = require('./formatDate');
 
 const DEFAULT_INTERVAL = 0;
@@ -14,6 +14,22 @@ function getUUID() {
         return elem.toString(16);
     });
     /* eslint-enable */
+}
+
+/**
+ * Axios has been replaced with SuperAgent (issue #28), to maintain some backwards
+ * compatibility the SuperAgent response object is marshaled to conform
+ * to the Axios response object
+ */
+function marshalHttpResponse(response) {
+    return {
+        data: response.body,
+        status: response.status,
+        statusText: response.statusText || response.res.statusMessage,
+        headers: response.headers,
+        request: response.xhr || response.req,
+        config: response.req
+    };
 }
 
 class SumoLogger {
@@ -137,10 +153,11 @@ class SumoLogger {
             }
 
             if (this.config.returnPromise && this.pendingLogs.length === 1) {
-                return axios
-                    .post(this.config.endpoint, this.pendingLogs.join('\n'), {
-                        headers
-                    })
+                return superagent
+                    .post(this.config.endpoint)
+                    .set(headers)
+                    .send(this.pendingLogs.join('\n'))
+                    .then(marshalHttpResponse)
                     .then(res => {
                         this._postSuccess(1);
                         return res;
@@ -152,10 +169,11 @@ class SumoLogger {
             }
 
             const logsToSend = Array.from(this.pendingLogs);
-            return axios
-                .post(this.config.endpoint, logsToSend.join('\n'), {
-                    headers
-                })
+            return superagent
+                .post(this.config.endpoint)
+                .set(headers)
+                .send(logsToSend.join('\n'))
+                .then(marshalHttpResponse)
                 .then(() => this._postSuccess(logsToSend.length))
                 .catch(error => {
                     this.config.onError(error);
