@@ -25,7 +25,7 @@ function marshalHttpResponse(response) {
     return {
         data: response.body,
         status: response.status,
-        statusText: response.statusText || response.res.statusMessage,
+        statusText: response.statusText || response.res.statusMessage || '',
         headers: response.headers,
         request: response.xhr || response.req,
         config: response.req
