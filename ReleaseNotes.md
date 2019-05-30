@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.5.1
+* Removed Axios from package.json
+
 ### v2.5.0
 * Replaced Axios with [SuperAgent](https://visionmedia.github.io/superagent/) as Axios seems adrift and not updating for reported security issues.
 
