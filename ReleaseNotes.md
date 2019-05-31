@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.5.2
+* Fix possible object var undefined error in `marshalHttpResponse`
+
 ### v2.5.1
 * Removed Axios from package.json
 
