@@ -22,10 +22,11 @@ function getUUID() {
  * to the Axios response object
  */
 function marshalHttpResponse(response) {
+    const statusMessage = response.res ? response.res.statusMessage : '';
     return {
         data: response.body,
         status: response.status,
-        statusText: response.statusText || response.res.statusMessage,
+        statusText: response.statusText || statusMessage,
         headers: response.headers,
         request: response.xhr || response.req,
         config: response.req
