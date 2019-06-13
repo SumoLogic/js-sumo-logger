@@ -1,5 +1,9 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.5.3
+* Correct README typo
+* Update package.lock for security audit fixes
+
 ### v2.5.2
 * Fix possible object var undefined error in `marshalHttpResponse`
 
