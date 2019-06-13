@@ -40,7 +40,7 @@ You must have an HTTP source in your Sumo Logic account to use this SDK. To crea
 
 You’ll need the endpoint URL to configure the logger object. You can get it by clicking the `Show URL` link for the source on the Manage Collection page.
 
-If you don't have a Sumo Logic account yes, you can easily create one by going to https://www.sumologic.com and clicking the Free Trial button--no cost, just enter your email.
+If you don't have a Sumo Logic account yet, you can easily create one by going to https://www.sumologic.com and clicking the Free Trial button--no cost, just enter your email.
 
 You must also have Node.js/npm installed to use the SDK. [Node installation](https://docs.npmjs.com/getting-started/installing-node)
 
