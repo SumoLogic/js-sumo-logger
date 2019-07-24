@@ -1,6 +1,9 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
-### v.2.5.4
+### v2.5.5
+* Fixed 228 of 228 high severity vulnerabilities found by NPM
+
+### v2.5.4
 * Update dateFormat function
 
 ### v2.5.3
