@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v.2.5.4
+* Update dateFormat function
+
 ### v2.5.3
 * Correct README typo
 * Update package.lock for security audit fixes
