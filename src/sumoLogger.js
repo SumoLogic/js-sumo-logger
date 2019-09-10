@@ -119,6 +119,7 @@ class SumoLogger {
 
     _postSuccess(logsSentLength) {
         this.pendingLogs = this.pendingLogs.slice(logsSentLength);
+        this.logSending = false;
         // Reset interval if needed:
         this.startLogSending();
         this.config.onSuccess();
@@ -164,7 +165,6 @@ class SumoLogger {
                     .then(marshalHttpResponse)
                     .then(res => {
                         this._postSuccess(1);
-                        this.logSending = false;
                         return res;
                     })
                     .catch(error => {
@@ -182,7 +182,6 @@ class SumoLogger {
                 .then(marshalHttpResponse)
                 .then(() => {
                     this._postSuccess(logsToSend.length);
-                    this.logSending = false;
                 })
                 .catch(error => {
                     this.config.onError(error);
