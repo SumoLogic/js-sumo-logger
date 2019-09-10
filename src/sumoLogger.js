@@ -48,6 +48,7 @@ class SumoLogger {
         this.config = {};
         this.pendingLogs = [];
         this.interval = 0;
+        this.logSending = false;
 
         this.setConfig(options);
         this.startLogSending();
@@ -124,11 +125,13 @@ class SumoLogger {
     }
 
     sendLogs() {
-        if (this.pendingLogs.length === 0) {
+        if (this.logSending || this.pendingLogs.length === 0) {
             return false;
         }
 
         try {
+            this.logSending = true;
+
             const headers = {
                 'X-Sumo-Client': 'sumo-javascript-sdk'
             };
@@ -161,10 +164,12 @@ class SumoLogger {
                     .then(marshalHttpResponse)
                     .then(res => {
                         this._postSuccess(1);
+                        this.logSending = false;
                         return res;
                     })
                     .catch(error => {
                         this.config.onError(error);
+                        this.logSending = false;
                         return Promise.reject(error);
                     });
             }
@@ -175,13 +180,17 @@ class SumoLogger {
                 .set(headers)
                 .send(logsToSend.join('\n'))
                 .then(marshalHttpResponse)
-                .then(() => this._postSuccess(logsToSend.length))
+                .then(() => {
+                    this._postSuccess(logsToSend.length);
+                    this.logSending = false;
+                })
                 .catch(error => {
                     this.config.onError(error);
+                    this.logSending = false
                     if (this.config.returnPromise) {
                         return Promise.reject(error);
                     }
-                });
+                })
         } catch (ex) {
             this.config.onError(ex);
             return false;
