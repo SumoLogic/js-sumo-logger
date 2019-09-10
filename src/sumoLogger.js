@@ -164,13 +164,14 @@ class SumoLogger {
                     .then(marshalHttpResponse)
                     .then(res => {
                         this._postSuccess(1);
+                        this.logSending = false;
                         return res;
                     })
                     .catch(error => {
                         this.config.onError(error);
+                        this.logSending = false;
                         return Promise.reject(error);
-                    })
-                    .finally(() => this.logSending = false);
+                    });
             }
 
             const logsToSend = Array.from(this.pendingLogs);
@@ -179,14 +180,17 @@ class SumoLogger {
                 .set(headers)
                 .send(logsToSend.join('\n'))
                 .then(marshalHttpResponse)
-                .then(() => this._postSuccess(logsToSend.length))
+                .then(() => {
+                    this._postSuccess(logsToSend.length);
+                    this.logSending = false;
+                })
                 .catch(error => {
                     this.config.onError(error);
+                    this.logSending = false
                     if (this.config.returnPromise) {
                         return Promise.reject(error);
                     }
                 })
-                .finally(() => this.logSending = false);
         } catch (ex) {
             this.config.onError(ex);
             return false;
