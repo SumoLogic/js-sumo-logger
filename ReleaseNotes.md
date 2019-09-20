@@ -1,6 +1,9 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
-### v.2.6.0
+### v2.6.1
+* Resolved critical severity vulnerabilities
+
+### v2.6.0
 * [Bug fix](https://github.com/SumoLogic/js-sumo-logger/issues/71): Log messages get duplicated when not using batching. Thanks [Cheng Da](https://github.com/dcheng666666)!
 
 ### v2.5.5
