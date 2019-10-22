@@ -57,6 +57,10 @@ $ npm install --save sumo-logger
 * Add `<script src="path/to/sumoLogger.js"></source>` to your pages or `import` or `require` the module in your app.
 * Add a `<script>` block with the desired log call to your pages, or use the function as needed in your app, as explained in [Usage](#user-content-usage).
 
+## Typescript
+
+A typings file developed by [Clement Allen](https://github.com/clementallen) is available at https://github.com/DefinitelyTyped/DefinitelyTyped/tree/d805f985f094cf169a933abb4fa506bcc6784dd8/types/sumo-logger (e.g., `"@types/sumo-logger": "^1.0.0"`).
+
 ## Usage
 
 ### Core functions

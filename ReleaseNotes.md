@@ -1,5 +1,8 @@
 # Sumo Logic JavaScript Logging SDK Release Notes
 
+### v2.6.2
+* Add reference to [Clement's](https://github.com/clementallen) typings file
+
 ### v2.6.1
 * Resolved critical severity vulnerabilities
 
