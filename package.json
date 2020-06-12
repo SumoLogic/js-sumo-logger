@@ -5,7 +5,7 @@
   "main": "lib/sumoLogger.js",
   "scripts": {
     "release": "np",
-    "test": "nyc mocha --exit",
+    "test": "nyc jest",
     "cover": "nyc --reporter=lcov npm test",
     "lint": "eslint src/sumoLogger.js src/formatDate.js test/**/*.js",
     "fix-code": "prettier-eslint --write src/sumoLogger.js src/formatDate.js test/**/*.js",
@@ -24,6 +24,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-node": "^8.0.1",
     "gulp-babel": "^8.0.0",
+    "jest": "^26.0.1",
     "mocha": "^6.1.4",
     "np": "^5.1.3",
     "nyc": "^14.1.1",
