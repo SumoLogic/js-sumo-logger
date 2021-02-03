@@ -105,7 +105,7 @@ class SumoLogger {
             return this.config.interval === 0;
         } else {
             const pendingMessages = this.pendingLogs.reduce((acc, curr) => {
-                const log = JSON.parse(curr);
+                const log = typeof curr === 'string' ? curr : JSON.parse(curr);
                 return acc + log.msg + '\n';
             }, '');
             const pendingBatchSize = pendingMessages.length;
