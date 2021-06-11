@@ -1,0 +1,20 @@
+name: Run Tests on PRs
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # LTS & Current version
+        # support for 'lts' & 'current' alias not yet supported
+        # ref: https://github.com/actions/setup-node/issues/26
+        node-version: [14.x, 16.x]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Testing on Node.js v.${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install
+      - run: npm run lint
+      - run: npm run test
