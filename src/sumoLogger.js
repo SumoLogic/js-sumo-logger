@@ -74,7 +74,8 @@ class SumoLogger {
             onSuccess: newConfig.onSuccess || NOOP,
             onError: newConfig.onError || NOOP,
             graphite: newConfig.graphite || false,
-            raw: newConfig.raw || false
+            raw: newConfig.raw || false,
+            carbon2: newConfig.carbon2 || false
         };
     }
 
@@ -139,6 +140,10 @@ class SumoLogger {
             if (this.config.graphite) {
                 Object.assign(headers, {
                     'Content-Type': 'application/vnd.sumologic.graphite'
+                });
+            } else if (this.config.carbon2) {
+                Object.assign(headers, {
+                    'Content-Type': 'application/vnd.sumologic.carbon2'
                 });
             } else {
                 Object.assign(headers, { 'Content-Type': 'application/json' });
@@ -247,6 +252,20 @@ class SumoLogger {
             return false;
         }
 
+        if (
+            this.config.carbon2 &&
+            (
+                !Object.prototype.hasOwnProperty.call(testEl, 'intrinsic_tags') ||
+                !Object.prototype.hasOwnProperty.call(testEl, 'meta_tags') ||
+                !Object.prototype.hasOwnProperty.call(testEl, 'value')
+            )
+        ) {
+            console.error(
+                'All "intrinsic_tags", "meta_tags" and "value" properties must be provided in the message object to send Carbon2 metrics'
+            );
+            return false;
+        }
+
         if (type === 'object') {
             if (Object.keys(message).length === 0) {
                 console.error('A non-empty JSON object must be provided');
@@ -291,6 +310,11 @@ class SumoLogger {
         const messages = message.map(item => {
             if (this.config.graphite) {
                 return `${item.path} ${item.value} ${Math.round(
+                    ts.getTime() / 1000
+                )}`;
+            }
+            if (this.config.carbon2) {
+                return `${item.intrinsic_tags}  ${item.meta_tags} ${item.value} ${Math.round(
                     ts.getTime() / 1000
                 )}`;
             }

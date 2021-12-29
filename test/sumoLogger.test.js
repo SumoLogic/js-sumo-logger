@@ -186,6 +186,56 @@ describe('sumoLogger', () => {
       );
     });
 
+    it('should set the carbon2 header if carbon2 enabled', () => {
+      const logger = new SumoLogger({
+        endpoint,
+        carbon2: true,
+      });
+
+      logger.log(
+          {
+            intrinsic_tags: 'graphite.metric.path',
+            meta_tags: 'metric=123',
+            value: 100,
+          },
+          {
+            timestamp,
+            sessionKey,
+          }
+      );
+
+      expect(superagent.post).toHaveBeenCalledWith(endpoint);
+      expect(superagent.set).toHaveBeenCalledWith({
+        'X-Sumo-Client': 'sumo-javascript-sdk',
+        'Content-Type': 'application/vnd.sumologic.carbon2',
+      });
+      expect(superagent.send).toHaveBeenCalledWith(
+          `graphite.metric.path  metric=123 100 ${Math.round(timestamp.getTime() / 1000)}`
+      );
+    });
+
+    it('should send correctly formated carbon2 metrics if carbon2 enabled', () => {
+      const logger = new SumoLogger({
+        endpoint,
+        carbon2: true,
+      });
+      const expectedTimestamp = Math.round(timestamp / 1000);
+
+      logger.log(
+          {
+            intrinsic_tags: 'graphite.metric.path',
+            meta_tags: 'metric=123',
+            value: 100,
+          },
+          { timestamp }
+      );
+
+      expect(superagent.post).toHaveBeenCalledWith(endpoint);
+      expect(superagent.send).toHaveBeenCalledWith(
+          `graphite.metric.path  metric=123 100 ${expectedTimestamp}`
+      );
+    });
+
     it('should send correctly formated graphite metrics if graphite enabled', () => {
       const logger = new SumoLogger({
         endpoint,
@@ -204,6 +254,37 @@ describe('sumoLogger', () => {
       expect(superagent.post).toHaveBeenCalledWith(endpoint);
       expect(superagent.send).toHaveBeenCalledWith(
         `graphite.metric.path 100 ${expectedTimestamp}`
+      );
+    });
+
+    it('should send correctly formatted carbon2 metrics in batch', () => {
+      const logger = new SumoLogger({
+        endpoint,
+        carbon2: true,
+      });
+      const expectedTimestamp = Math.round(timestamp / 1000);
+
+      logger.log(
+          [
+            {
+              intrinsic_tags: 'graphite.metric.path',
+              meta_tags: 'metric=123',
+              value: 100,
+            },
+            {
+              intrinsic_tags: 'another.graphite.metric.path',
+              meta_tags: 'metric=456',
+              value: 50,
+            },
+          ],
+          {
+            timestamp,
+          }
+      );
+
+      expect(superagent.post).toHaveBeenCalledWith(endpoint);
+      expect(superagent.send).toHaveBeenCalledWith(
+          `graphite.metric.path  metric=123 100 ${expectedTimestamp}\nanother.graphite.metric.path  metric=456 50 ${expectedTimestamp}`
       );
     });
 
@@ -580,6 +661,19 @@ describe('sumoLogger', () => {
       );
     });
 
+    it('required carbon2 message properties not provided', () => {
+      const logger = new SumoLogger({
+        endpoint,
+        carbon2: true,
+      });
+      logger.log({
+        incorrect: 'value',
+      });
+      expect(console.error).toHaveBeenCalledWith(
+          'All "intrinsic_tags", "meta_tags" and "value" properties must be provided in the message object to send Carbon2 metrics'
+      );
+    });
+
     it('should not not throw an error if falsy parameters are provided', () => {
       const logger = new SumoLogger({
         endpoint,
@@ -588,6 +682,19 @@ describe('sumoLogger', () => {
       logger.log({
         path: '/this/is/a/path',
         value: 0,
+      });
+      expect(console.error).toHaveBeenCalledTimes(0);
+    });
+
+    it('should not not throw an error if falsy parameters are provided', () => {
+      const logger = new SumoLogger({
+        endpoint,
+        carbon2: true,
+      });
+      logger.log({
+        intrinsic_tags: '/this/is/a/path',
+        meta_tags: 'metric',
+        value: 100,
       });
       expect(console.error).toHaveBeenCalledTimes(0);
     });
