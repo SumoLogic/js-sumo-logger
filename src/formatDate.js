@@ -1,5 +1,5 @@
 function formatDate(date) {
-    return date.toJSON();
+  return date.toJSON();
 }
 
 module.exports = formatDate;
