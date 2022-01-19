@@ -41,13 +41,7 @@ const sessionKey = 'abcd1234';
 
 describe('sumoLogger', () => {
   afterEach(() => {
-    superagent.post.mockClear();
-    superagent.set.mockClear();
-    superagent.send.mockClear();
-    onSuccessSpy.mockClear();
-    onErrorSpy.mockClear();
-    onPromiseReturnSpy.mockClear();
-    console.error.mockClear();
+    jest.clearAllMocks();
   });
 
   describe('log()', () => {
@@ -193,15 +187,15 @@ describe('sumoLogger', () => {
       });
 
       logger.log(
-          {
-            intrinsic_tags: 'graphite.metric.path',
-            meta_tags: 'metric=123',
-            value: 100,
-          },
-          {
-            timestamp,
-            sessionKey,
-          }
+        {
+          intrinsic_tags: 'graphite.metric.path',
+          meta_tags: 'metric=123',
+          value: 100,
+        },
+        {
+          timestamp,
+          sessionKey,
+        }
       );
 
       expect(superagent.post).toHaveBeenCalledWith(endpoint);
@@ -210,7 +204,9 @@ describe('sumoLogger', () => {
         'Content-Type': 'application/vnd.sumologic.carbon2',
       });
       expect(superagent.send).toHaveBeenCalledWith(
-          `graphite.metric.path  metric=123 100 ${Math.round(timestamp.getTime() / 1000)}`
+        `graphite.metric.path  metric=123 100 ${Math.round(
+          timestamp.getTime() / 1000
+        )}`
       );
     });
 
@@ -222,17 +218,17 @@ describe('sumoLogger', () => {
       const expectedTimestamp = Math.round(timestamp / 1000);
 
       logger.log(
-          {
-            intrinsic_tags: 'graphite.metric.path',
-            meta_tags: 'metric=123',
-            value: 100,
-          },
-          { timestamp }
+        {
+          intrinsic_tags: 'graphite.metric.path',
+          meta_tags: 'metric=123',
+          value: 100,
+        },
+        { timestamp }
       );
 
       expect(superagent.post).toHaveBeenCalledWith(endpoint);
       expect(superagent.send).toHaveBeenCalledWith(
-          `graphite.metric.path  metric=123 100 ${expectedTimestamp}`
+        `graphite.metric.path  metric=123 100 ${expectedTimestamp}`
       );
     });
 
@@ -265,26 +261,26 @@ describe('sumoLogger', () => {
       const expectedTimestamp = Math.round(timestamp / 1000);
 
       logger.log(
-          [
-            {
-              intrinsic_tags: 'graphite.metric.path',
-              meta_tags: 'metric=123',
-              value: 100,
-            },
-            {
-              intrinsic_tags: 'another.graphite.metric.path',
-              meta_tags: 'metric=456',
-              value: 50,
-            },
-          ],
+        [
           {
-            timestamp,
-          }
+            intrinsic_tags: 'graphite.metric.path',
+            meta_tags: 'metric=123',
+            value: 100,
+          },
+          {
+            intrinsic_tags: 'another.graphite.metric.path',
+            meta_tags: 'metric=456',
+            value: 50,
+          },
+        ],
+        {
+          timestamp,
+        }
       );
 
       expect(superagent.post).toHaveBeenCalledWith(endpoint);
       expect(superagent.send).toHaveBeenCalledWith(
-          `graphite.metric.path  metric=123 100 ${expectedTimestamp}\nanother.graphite.metric.path  metric=456 50 ${expectedTimestamp}`
+        `graphite.metric.path  metric=123 100 ${expectedTimestamp}\nanother.graphite.metric.path  metric=456 50 ${expectedTimestamp}`
       );
     });
 
@@ -576,6 +572,10 @@ describe('sumoLogger', () => {
   });
 
   describe('flushLogs()', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
     it('should send any queued logs', () => {
       const logger = new SumoLogger({
         endpoint,
@@ -670,7 +670,7 @@ describe('sumoLogger', () => {
         incorrect: 'value',
       });
       expect(console.error).toHaveBeenCalledWith(
-          'All "intrinsic_tags", "meta_tags" and "value" properties must be provided in the message object to send Carbon2 metrics'
+        'All "intrinsic_tags", "meta_tags" and "value" properties must be provided in the message object to send Carbon2 metrics'
       );
     });
 
